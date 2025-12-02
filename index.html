@@ -1,0 +1,1746 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>欧洲退休蓝图 (意大利/西班牙/德国)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+        body { font-family: 'Noto Sans SC', sans-serif; background-color: #f3f4f6; }
+        .card { background: white; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+        
+        /* 子分页 Tab 样式 */
+        .tab-active { border-bottom: 2px solid #2563eb; color: #2563eb; font-weight: 600; }
+        .tab-inactive { color: #6b7280; }
+        .tab-inactive:hover { color: #374151; }
+
+        /* 主分页 Tab 样式 */
+        .main-tab-active { border-bottom: 3px solid #1d4ed8; color: #1e3a8a; font-weight: 600; background-color: white; }
+        .main-tab-inactive { color: #4b5563; border-bottom: 3px solid transparent; }
+        .main-tab-inactive:hover { color: #111827; background-color: #f9fafb; border-bottom-color: #d1d5db; }
+
+        .locked-overlay {
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(255,255,255,0.7);
+            z-index: 10;
+            display: flex; justify-content: center; align-items: center;
+            border-radius: 12px;
+            backdrop-filter: blur(2px);
+        }
+        .task-checkbox:checked + span { text-decoration: line-through; color: #9ca3af; }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <!-- 顶部导航 (已修改) -->
+    <nav class="bg-blue-900 text-white p-4 shadow-lg sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <i class="fas fa-compass text-2xl text-blue-300"></i>
+                <div>
+                    <h1 class="text-xl font-bold tracking-wide">欧洲退休蓝图</h1>
+                    <p class="text-xs text-blue-200" id="nav-subtitle">当前: 意大利米兰个人计划</p>
+                </div>
+            </div>
+            <div class="text-right hidden md:block">
+                <div class="text-sm opacity-80" id="level-badge-label">当前等级</div>
+                <!-- 徽章现在是可切换的 -->
+                <div class="font-bold text-yellow-400" id="current-level-badge-italy">LEVEL 1: 基础筑基</div>
+                <div class="font-bold text-yellow-400 hidden" id="current-level-badge-spain">LEVEL 1: 基础筑基</div>
+                <div class="font-bold text-yellow-400 hidden" id="current-level-badge-germany">LEVEL 1: 基础筑基</div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-6xl mx-auto p-4 md:p-6 space-y-6">
+
+        <!-- ============================ -->
+        <!-- 主分页 Tab 导航 -->
+        <!-- ============================ -->
+        <div class="flex bg-gray-100 rounded-lg p-1 space-x-1 shadow-inner">
+            <button onclick="switchMainTab('page-italy')" id="main-tab-btn-italy" class="flex-1 py-3 px-2 text-center text-sm font-medium main-tab-active transition rounded-md">
+                <i class="fas fa-flag-italy mr-1 text-green-600"></i> 意大利 (个人计划)
+            </button>
+            <button onclick="switchMainTab('page-spain')" id="main-tab-btn-spain" class="flex-1 py-3 px-2 text-center text-sm font-medium main-tab-inactive transition rounded-md">
+                <i class="fas fa-sun mr-1 text-yellow-500"></i> 西班牙 (个人计划)
+            </button>
+            <button onclick="switchMainTab('page-germany')" id="main-tab-btn-germany" class="flex-1 py-3 px-2 text-center text-sm font-medium main-tab-inactive transition rounded-md">
+                <i class="fas fa-industry mr-1 text-gray-600"></i> 德国 (个人计划)
+            </button>
+            <button onclick="switchMainTab('page-crossborder')" id="main-tab-btn-crossborder" class="flex-1 py-3 px-2 text-center text-sm font-medium main-tab-inactive transition rounded-md">
+                <i class="fas fa-globe-europe mr-1 text-blue-500"></i> 欧盟跨境 (工具)
+            </button>
+        </div>
+
+
+        <!-- ============================ -->
+        <!-- 页面 1: 意大利 (Italy) - 完整互动应用 -->
+        <!-- ============================ -->
+        <div id="page-italy" class="main-page-content space-y-6">
+            <!-- 核心摘要卡片 (意大利) -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="card p-6 border-l-4 border-blue-500">
+                    <div class="text-gray-500 text-sm mb-1">每月投入目标</div>
+                    <div class="text-3xl font-bold text-gray-800">€700</div>
+                    <div class="text-xs text-green-600 mt-2 flex items-center">
+                        <i class="fas fa-check-circle mr-1"></i> 占净收入 ~23%
+                    </div>
+                </div>
+                <div class="card p-6 border-l-4 border-indigo-500">
+                    <div class="text-gray-500 text-sm mb-1">预计退休本金 (67岁)</div>
+                    <div class="text-3xl font-bold text-gray-800" id="projected-capital-italy">€385,000</div>
+                    <div class="text-xs text-indigo-600 mt-2">
+                        基于年化 5% 保守估算
+                    </div>
+                    <!-- Collapsible Section (意大利) -->
+                    <div class="mt-4 border-t border-gray-200 pt-3">
+                        <button onclick="togglePrincipalBreakdown('italy')" class="flex justify-between items-center w-full text-left text-sm font-medium text-gray-600 hover:text-indigo-700 focus:outline-none">
+                            <span>
+                                <i class="fas fa-archive mr-1 opacity-70"></i>
+                                查看本金构成 (€201,600)
+                            </span>
+                            <i id="breakdown-arrow-italy" class="fas fa-chevron-down transition-transform duration-200"></i>
+                        </button>
+                        <div id="principal-breakdown-italy" class="hidden mt-3 space-y-2 text-xs text-gray-500 pl-4">
+                            <div class="flex justify-between">
+                                <span>补充养老金 (你):</span>
+                                <span class="font-medium text-gray-700">€86,400</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>补充养老金 (配偶):</span>
+                                <span class="font-medium text-gray-700">€43,200</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>股票/ETF定投:</span>
+                                <span class="font-medium text-gray-700">€72,000</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card p-6 border-l-4 border-emerald-500">
+                    <div class="text-gray-500 text-sm mb-1">预计月被动收入</div>
+                    <div class="text-3xl font-bold text-gray-800" id="projected-income-italy">€1,280+</div>
+                    <div class="text-xs text-gray-500 mt-2">
+                        不含国家养老金 (INPS)
+                    </div>
+                </div>
+            </div>
+
+            <!-- 主要内容区：左侧图表/计算，右侧策略 (意大利) -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                
+                <!-- 左侧：互动模拟器与图表 (意大利) -->
+                <div class="lg:col-span-2 space-y-6">
+                    <!-- 模拟器控制台 (意大利) -->
+                    <div class="card p-6">
+                        <h3 class="text-lg font-bold mb-4 flex items-center">
+                            <i class="fas fa-calculator mr-2 text-blue-600"></i> 财富增长模拟器 (意大利)
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">每月投资 (€)</label>
+                                <input type="range" id="monthly-invest-italy" min="300" max="1500" step="50" value="700" class="w-full h-2 bg-blue-200 rounded-lg appearance-none cursor-pointer">
+                                <div class="flex justify-between text-xs text-gray-500 mt-1">
+                                    <span>€300</span>
+                                    <span id="monthly-invest-val-italy" class="font-bold text-blue-700 text-lg">€700</span>
+                                    <span>€1500</span>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">预期年化收益率 (%)</label>
+                                <input type="range" id="annual-return-italy" min="2" max="10" step="0.5" value="5" class="w-full h-2 bg-green-200 rounded-lg appearance-none cursor-pointer">
+                                <div class="flex justify-between text-xs text-gray-500 mt-1">
+                                    <span>2% (保守)</span>
+                                    <span id="annual-return-val-italy" class="font-bold text-green-700 text-lg">5%</span>
+                                    <span>10% (激进)</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 图表区域 (意大利) -->
+                        <div class="relative h-64 w-full">
+                            <canvas id="wealthChart-italy"></canvas>
+                        </div>
+                        <p class="text-xs text-gray-400 mt-4 text-center">*此预测假设股息复投，且未扣除通胀。实际购买力需考虑通胀因素。</p>
+                    </div>
+
+                    <!-- 核心策略 Tabs (意大利子分页) -->
+                    <div class="card overflow-hidden">
+                        <div class="flex border-b border-gray-200">
+                            <button onclick="switchTab('strategy-1-italy', 'italy')" id="tab-btn-1-italy" class="flex-1 py-4 text-center text-sm font-medium tab-active transition">
+                                <i class="fas fa-shield-alt mr-1"></i> 第一层：避税与TFR
+                            </button>
+                            <button onclick="switchTab('strategy-2-italy', 'italy')" id="tab-btn-2-italy" class="flex-1 py-4 text-center text-sm font-medium tab-inactive transition">
+                                <i class="fas fa-chart-line mr-1"></i> 第二层：ETF定投
+                            </button>
+                            <button onclick="switchTab('strategy-3-italy', 'italy')" id="tab-btn-3-italy" class="flex-1 py-4 text-center text-sm font-medium tab-inactive transition">
+                                <i class="fas fa-home mr-1"></i> 第三层：房产协同
+                            </button>
+                            <button onclick="switchTab('strategy-4-italy', 'italy')" id="tab-btn-4-italy" class="flex-1 py-4 text-center text-sm font-medium tab-inactive transition">
+                                <i class="fas fa-balance-scale mr-1"></i> 养老金对比
+                            </button>
+                        </div>
+
+                        <div class="p-6 bg-white min-h-[300px]">
+                            <!-- 策略 1: 养老金 -->
+                            <div id="strategy-1-italy" class="strategy-content-italy">
+                                <h4 class="font-bold text-lg text-blue-800 mb-3">利用意大利的"免费午餐" (TFR + Deduzione)</h4>
+                                <p class="text-gray-600 mb-4 text-sm">这是你在意大利建立被动收入基石的最快方法，利用税收优惠立即获得回报。</p>
+                                <div class="space-y-4">
+                                    <div class="flex items-start">
+                                        <div class="bg-blue-100 p-2 rounded-full mr-3 text-blue-600"><i class="fas fa-gift"></i></div>
+                                        <div>
+                                            <h5 class="font-bold text-gray-800">1. TFR (离职费) 激活</h5>
+                                            <p class="text-sm text-gray-600">不要让TFR留在公司！将其转入行业养老金基金 (Fondo Negoziale)。这部分钱大概占你年薪的6.91%，完全是被动积累。</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-start">
+                                        <div class="bg-blue-100 p-2 rounded-full mr-3 text-blue-600"><i class="fas fa-hand-holding-usd"></i></div>
+                                        <div>
+                                            <h5 class="font-bold text-gray-800">2. 雇主配比 (Match)</h5>
+                                            <p class="text-sm text-gray-600">只需你每月从工资缴纳微小比例（通常1%-2%），雇主必须强制缴纳同等比例。这是白捡的钱。</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-start">
+                                        <div class="bg-blue-100 p-2 rounded-full mr-3 text-blue-600"><i class="fas fa-file-invoice-dollar"></i></div>
+                                        <div>
+                                            <h5 class="font-bold text-gray-800">3. 每年 €5,164 免税额度</h5>
+                                            <p class="text-sm text-gray-600">你自愿存入补充养老金的钱，每年最高 €5,164 可在个税(IRPEF)中抵扣。你的边际税率约35%-43%，这意味着每存 €100，实际成本仅 €60 左右。</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 策略 2: ETF -->
+                            <div id="strategy-2-italy" class="strategy-content-italy hidden">
+                                <h4 class="font-bold text-lg text-indigo-800 mb-3">PAC (定投计划)：打造流动性资金池</h4>
+                                <p class="text-gray-600 mb-4 text-sm">养老金虽然税收优惠，但锁定期长。你需要一个灵活的证券账户（Directa 或 Degiro）来应对中期需求（如买房首付）或67岁前的退休补充。</p>
+                                <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 mb-4">
+                                    <h5 class="font-bold text-sm text-gray-700 mb-2">推荐组合 (极简主义)</h5>
+                                    <div class="flex justify-between items-center mb-2">
+                                        <span class="text-sm">VWCE / SWDA (全球股票指数)</span>
+                                        <span class="font-bold text-indigo-600">80%</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                        <div class="bg-indigo-600 h-2.5 rounded-full" style="width: 80%"></div>
+                                    </div>
+                                    <div class="flex justify-between items-center mt-2 mb-2">
+                                        <span class="text-sm">AGGH / VAGF (全球债券欧元对冲)</span>
+                                        <span class="font-bold text-teal-500">20%</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                        <div class="bg-teal-500 h-2.5 rounded-full" style="width: 20%"></div>
+                                    </div>
+                                </div>
+                                <p class="text-xs text-gray-500">
+                                    *操作建议：设定每月自动扣款。不要看市场涨跌。利用 Directa SIM 的"PAC in ETF"功能可免除交易手续费。
+                                </p>
+                            </div>
+
+                            <!-- 策略 3: 房产 -->
+                            <div id="strategy-3-italy" class="strategy-content-italy hidden">
+                                <h4 class="font-bold text-lg text-emerald-800 mb-3">购房与退休的平衡</h4>
+                                <p class="text-gray-600 mb-4 text-sm">你目前的优先级是 养老 > 买房。这很明智，因为你在43岁开始复利时钟已经稍晚。</p>
+                                <ul class="list-disc list-inside space-y-2 text-sm text-gray-700">
+                                    <li><strong>第一套房 (Prima Casa)：</strong> 意大利对首套房有极大的税收优惠（登记税2% vs 9%）。</li>
+                                    <li><strong>资金冲突：</strong> 建议将“ETF定投”账户作为潜在的“首付蓄水池”。如果5-8年后需要买房，可以从ETF账户提取。</li>
+                                    <li><strong>不要动用养老金：</strong> 除非是购买首套房（法律允许提取75%的养老金用于买首套房），否则绝对不要动用Fondo Pensione的钱，因为那是免税复利的核心。</li>
+                                </ul>
+                            </div>
+
+                            <!-- 策略 4: 养老金对比 -->
+                            <div id="strategy-4-italy" class="strategy-content-italy hidden">
+                                <h4 class="font-bold text-lg text-orange-800 mb-3">意大利补充养老金 (Pensione Complementare) 对比</h4>
+                                <p class="text-gray-600 mb-4 text-sm">所有类型都享受每年最高 €5,164 的个税抵扣 (Deduzione)。主要区别在于成本、谁可以加入、以及能否获得雇主匹配。</p>
+                                <div class="overflow-x-auto">
+                                    <table class="w-full min-w-[600px] text-left text-sm">
+                                        <thead class="bg-gray-50 border-b border-gray-200">
+                                            <tr>
+                                                <th class="p-3 font-semibold text-gray-700">类型</th>
+                                                <th class="p-3 font-semibold text-gray-700">Fondo Negoziale (行业基金)</th>
+                                                <th class="p-3 font-semibold text-gray-700">Fondo Aperto (开放式基金)</th>
+                                                <th class="p-3 font-semibold text-gray-700">PIP (个人养老金计划)</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="divide-y divide-gray-100">
+                                            <tr class="hover:bg-gray-50">
+                                                <td class="p-3 font-medium">准入人群</td>
+                                                <td class="p-3">特定行业合同的雇员 (如 Commercio, Metalmeccanico)</td>
+                                                <td class="p-3">所有人 (雇员, 自由职业, 无业)</td>
+                                                <td class="p-3">所有人 (主要由保险公司提供)</td>
+                                            </tr>
+                                            <tr class="hover:bg-gray-50">
+                                                <td class="p-3 font-medium">TFR 转移</td>
+                                                <td class="p-3"><i class="fas fa-check-circle text-green-500 mr-1"></i> 是</td>
+                                                <td class="p-3"><i class="fas fa-check-circle text-green-500 mr-1"></i> 是</td>
+                                                <td class="p-3"><i class="fas fa-check-circle text-green-500 mr-1"></i> 是</td>
+                                            </tr>
+                                            <tr class="hover:bg-gray-50">
+                                                <td class="p-3 font-medium">雇主匹配</td>
+                                                <td class="p-3"><i class="fas fa-check-circle text-green-500 mr-1"></i> **是 (核心优势)**</td>
+                                                <td class="p-3"><i class="fas fa-times-circle text-red-400 mr-1"></i> 否 (除非公司协议特许)</td>
+                                                <td class="p-3"><i class="fas fa-times-circle text-red-400 mr-1"></i> 否</td>
+                                            </tr>
+                                            <tr class="hover:bg-gray-50">
+                                                <td class="p-3 font-medium">平均成本 (ISC)</td>
+                                                <td class="p-3"><strong class="text-green-600">最低</strong> (通常 0.2% - 0.5%)</td>
+                                                <td class="p-3"><span class="text-yellow-700">中等</span> (通常 0.8% - 1.5%)</td>
+                                                <td class="p-3"><strong class="text-red-600">最高</strong> (通常 1.2% - 2.0%+)</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                                    <h5 class="font-bold text-blue-800"><i class="fas fa-lightbulb mr-1"></i> 蓝图建议：</h5>
+                                    <p class="text-sm text-blue-700 mt-1">
+                                        对于有固定工作的雇员，**行业基金 (Fondo Negoziale)** 永远是第一选择。
+                                        <br>
+                                        因为它同时提供了 **(1) 最低的管理成本** 和 **(2) 白送的雇主匹配金**。这是其他两类产品无法替代的。
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 右侧：任务系统 (意大利) -->
+                <div class="space-y-6">
+                    <!-- 资产分配建议 (意大利) -->
+                    <div class="card p-6 bg-gradient-to-br from-slate-800 to-slate-900 text-white">
+                        <h3 class="font-bold text-lg mb-4">每月 €700 分配建议 (IT)</h3>
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center border-b border-slate-700 pb-2">
+                                <div><div class="font-bold text-blue-300">补充养老金 (你)</div><div class="text-xs text-gray-400">吃满税收红利</div></div>
+                                <div class="text-xl font-mono">€300</div>
+                            </div>
+                            <div class="flex justify-between items-center border-b border-slate-700 pb-2">
+                                <div><div class="font-bold text-purple-300">补充养老金 (配偶)</div><div class="text-xs text-gray-400">建立家庭安全网</div></div>
+                                <div class="text-xl font-mono">€150</div>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <div><div class="font-bold text-emerald-300">股票/ETF定投</div><div class="text-xs text-gray-400">灵活增值/房产储备</div></div>
+                                <div class="text-xl font-mono">€250</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Level 1 任务卡片 (意大利) -->
+                    <div class="card p-6 border-l-4 border-blue-500 relative transition-all duration-300" id="card-level-1-italy">
+                        <div class="flex justify-between items-center mb-4">
+                             <h3 class="font-bold text-gray-800">Level 1: 基础筑基</h3>
+                             <span class="text-xs font-bold text-blue-600 bg-blue-100 px-2 py-1 rounded-full" id="progress-text-1-italy">0%</span>
+                        </div>
+                        
+                        <div class="w-full bg-gray-200 rounded-full h-2.5 mb-6">
+                            <div class="bg-blue-600 h-2.5 rounded-full transition-all duration-500" id="progress-bar-1-italy" style="width: 0%"></div>
+                        </div>
+
+                        <div class="space-y-3">
+                            <label class="flex items-start space-x-3 cursor-pointer p-2 hover:bg-gray-50 rounded transition">
+                                <input type="checkbox" id="task1-italy" class="mt-1 form-checkbox h-5 w-5 text-blue-600 task-checkbox" onchange="updateAllProgress('italy')">
+                                <span class="text-sm text-gray-600">确认公司是否有行业基金(Fondo Negoziale)并签约</span>
+                            </label>
+                            <label class="flex items-start space-x-3 cursor-pointer p-2 hover:bg-gray-50 rounded transition">
+                                <input type="checkbox" id="task2-italy" class="mt-1 form-checkbox h-5 w-5 text-blue-600 task-checkbox" onchange="updateAllProgress('italy')">
+                                <span class="text-sm text-gray-600">签署 TFR 转移协议，将未来TFR转入基金</span>
+                            </label>
+                            <label class="flex items-start space-x-3 cursor-pointer p-2 hover:bg-gray-50 rounded transition">
+                                <input type="checkbox" id="task3-italy" class="mt-1 form-checkbox h-5 w-5 text-blue-600 task-checkbox" onchange="updateAllProgress('italy')">
+                                <span class="text-sm text-gray-600">开设 Directa 或 Degiro 证券账户</span>
+                            </label>
+                            <label class="flex items-start space-x-3 cursor-pointer p-2 hover:bg-gray-50 rounded transition">
+                                <input type="checkbox" id="task4-italy" class="mt-1 form-checkbox h-5 w-5 text-blue-600 task-checkbox" onchange="updateAllProgress('italy')">
+                                <span class="text-sm text-gray-600">设定每月薪水到账次日的自动转账</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Level 2 任务卡片 (意大利) -->
+                    <div class="card p-6 border-l-4 border-purple-500 relative transition-all duration-500" id="card-level-2-italy">
+                        <!-- 锁定层 -->
+                        <div class="locked-overlay" id="level-2-lock-italy">
+                            <div class="text-center">
+                                <i class="fas fa-lock text-3xl text-gray-400 mb-2"></i>
+                                <p class="text-sm font-bold text-gray-500">完成 Level 1 解锁</p>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-between items-center mb-4">
+                             <h3 class="font-bold text-gray-800">Level 2: 财富滚雪球 (1-3年)</h3>
+                             <span class="text-xs font-bold text-purple-600 bg-purple-100 px-2 py-1 rounded-full" id="progress-text-2-italy">0%</span>
+                        </div>
+
+                        <div class="w-full bg-gray-200 rounded-full h-2.5 mb-6">
+                            <div class="bg-purple-600 h-2.5 rounded-full transition-all duration-500" id="progress-bar-2-italy" style="width: 0%"></div>
+                        </div>
+
+                        <div class="space-y-3">
+                             <label class="flex items-start space-x-3 cursor-pointer p-2 hover:bg-gray-50 rounded transition">
+                                <input type="checkbox" id="advTask1-italy" class="mt-1 form-checkbox h-5 w-5 text-purple-600 task-checkbox" onchange="updateAllProgress('italy')">
+                                <div class="flex flex-col">
+                                    <span class="text-sm font-semibold text-gray-700">第一笔退税再投资</span>
+                                    <span class="text-xs text-gray-500">明年7月收到730退税后，直接投入投资账户</span>
+                                </div>
+                            </label>
+                            <label class="flex items-start space-x-3 cursor-pointer p-2 hover:bg-gray-50 rounded transition">
+                                <input type="checkbox" id="advTask2-italy" class="mt-1 form-checkbox h-5 w-5 text-purple-600 task-checkbox" onchange="updateAllProgress('italy')">
+                                <div class="flex flex-col">
+                                    <span class="text-sm font-semibold text-gray-700">应急基金达标 (€15k)</span>
+                                    <span class="text-xs text-gray-500">存满6个月生活费，放入活期储蓄(Conto Deposito)</span>
+                                </div>
+                            </label>
+                            <label class="flex items-start space-x-3 cursor-pointer p-2 hover:bg-gray-50 rounded transition">
+                                <input type="checkbox" id="advTask3-italy" class="mt-1 form-checkbox h-5 w-5 text-purple-600 task-checkbox" onchange="updateAllProgress('italy')">
+                                <div class="flex flex-col">
+                                    <span class="text-sm font-semibold text-gray-700">配偶账户全额抵扣</span>
+                                    <span class="text-xs text-gray-500">家庭双人养老金缴费均达到 €5,164 上限</span>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- 最终胜利卡片 (意大利) -->
+                    <div id="victory-card-italy" class="card p-6 bg-yellow-50 border border-yellow-300 hidden text-center transform scale-90 transition-all duration-500">
+                        <div class="text-4xl text-yellow-500 mb-2"><i class="fas fa-trophy"></i></div>
+                        <h3 class="text-xl font-bold text-yellow-800 mb-2">系统构建完成！ (IT)</h3>
+                        <p class="text-sm text-yellow-700 mb-4">你的“财富自动运转机器”已经建成。接下来只需要交给时间和复利。</p>
+                        <button onclick="fireConfetti()" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded-full text-sm transition">
+                            庆祝一下！ 🎉
+                        </button>
+                    </div>
+
+                    <!-- AI 智能助手 (意大利) -->
+                    <div class="card p-6 border-l-4 border-cyan-500 space-y-4">
+                        <h3 class="font-bold text-lg text-gray-800 flex items-center">
+                            <i class="fas fa-brain mr-2 text-cyan-600"></i> AI 智能理财助手 (IT)
+                        </h3>
+                        <p class="text-sm text-gray-600">对这个计划有疑问吗？比如 "什么是TFR？" 或 "VWCE是什么？"</p>
+                        
+                        <div class="flex space-x-2">
+                            <input type="text" id="ai-query-input-italy" class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="在此输入你的问题...">
+                            <button id="ai-submit-btn-italy" class="bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-2 px-4 rounded-lg transition">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                            <button class="ai-preset-btn-italy text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 px-2 py-1 rounded-full">什么是TFR？</button>
+                            <button class="ai-preset-btn-italy text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 px-2 py-1 rounded-full">ETF有什么风险？</button>
+                            <button class="ai-preset-btn-italy text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 px-2 py-1 rounded-full">Directa安全吗？</button>
+                        </div>
+                        <div id="ai-response-area-italy" class="mt-4">
+                            <div id="ai-loading-italy" class="hidden text-center text-gray-500">
+                                <i class="fas fa-spinner fa-spin mr-2"></i> 正在思考中...
+                            </div>
+                            <div id="ai-response-text-italy" class="text-sm text-gray-700 bg-gray-50 p-3 rounded-lg border border-gray-200" style="white-space: pre-wrap;">点击上方预设问题，或输入你的疑问。</div>
+                            <div id="ai-response-sources-italy" class="mt-2 text-xs text-gray-500"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================ -->
+        <!-- 页面 2: 西班牙 (Spain) - 完整互动应用 -->
+        <!-- ============================ -->
+        <div id="page-spain" class="main-page-content space-y-6 hidden">
+            <!-- 核心摘要卡片 (西班牙) -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="card p-6 border-l-4 border-yellow-500">
+                    <div class="text-gray-500 text-sm mb-1">每月投入目标</div>
+                    <div class="text-3xl font-bold text-gray-800">€600</div>
+                    <div class="text-xs text-green-600 mt-2 flex items-center">
+                        <i class="fas fa-check-circle mr-1"></i> 假设目标
+                    </div>
+                </div>
+                <div class="card p-6 border-l-4 border-orange-500">
+                    <div class="text-gray-500 text-sm mb-1">预计退休本金 (67岁)</div>
+                    <div class="text-3xl font-bold text-gray-800" id="projected-capital-spain">€325,700</div>
+                    <div class="text-xs text-orange-600 mt-2">
+                        基于年化 5% 保守估算
+                    </div>
+                    <!-- Collapsible Section (西班牙) -->
+                    <div class="mt-4 border-t border-gray-200 pt-3">
+                        <button onclick="togglePrincipalBreakdown('spain')" class="flex justify-between items-center w-full text-left text-sm font-medium text-gray-600 hover:text-orange-700 focus:outline-none">
+                            <span>
+                                <i class="fas fa-archive mr-1 opacity-70"></i>
+                                查看本金构成 (€172,800)
+                            </span>
+                            <i id="breakdown-arrow-spain" class="fas fa-chevron-down transition-transform duration-200"></i>
+                        </button>
+                        <div id="principal-breakdown-spain" class="hidden mt-3 space-y-2 text-xs text-gray-500 pl-4">
+                            <div class="flex justify-between">
+                                <span>个人养老金 (你):</span>
+                                <span class="font-medium text-gray-700">€43,200</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>个人养老金 (配偶):</span>
+                                <span class="font-medium text-gray-700">€43,200</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>股票/ETF定投:</span>
+                                <span class="font-medium text-gray-700">€86,400</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card p-6 border-l-4 border-red-500">
+                    <div class="text-gray-500 text-sm mb-1">预计月被动收入</div>
+                    <div class="text-3xl font-bold text-gray-800" id="projected-income-spain">€1,080+</div>
+                    <div class="text-xs text-gray-500 mt-2">
+                        不含国家养老金 (Pensión Pública)
+                    </div>
+                </div>
+            </div>
+
+            <!-- 主要内容区：左侧图表/计算，右侧策略 (西班牙) -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                
+                <!-- 左侧：互动模拟器与图表 (西班牙) -->
+                <div class="lg:col-span-2 space-y-6">
+                    <!-- 模拟器控制台 (西班牙) -->
+                    <div class="card p-6">
+                        <h3 class="text-lg font-bold mb-4 flex items-center">
+                            <i class="fas fa-calculator mr-2 text-yellow-600"></i> 财富增长模拟器 (西班牙)
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">每月投资 (€)</label>
+                                <input type="range" id="monthly-invest-spain" min="300" max="1500" step="50" value="600" class="w-full h-2 bg-yellow-200 rounded-lg appearance-none cursor-pointer">
+                                <div class="flex justify-between text-xs text-gray-500 mt-1">
+                                    <span>€300</span>
+                                    <span id="monthly-invest-val-spain" class="font-bold text-yellow-700 text-lg">€600</span>
+                                    <span>€1500</span>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">预期年化收益率 (%)</label>
+                                <input type="range" id="annual-return-spain" min="2" max="10" step="0.5" value="5" class="w-full h-2 bg-green-200 rounded-lg appearance-none cursor-pointer">
+                                <div class="flex justify-between text-xs text-gray-500 mt-1">
+                                    <span>2% (保守)</span>
+                                    <span id="annual-return-val-spain" class="font-bold text-green-700 text-lg">5%</span>
+                                    <span>10% (激进)</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 图表区域 (西班牙) -->
+                        <div class="relative h-64 w-full">
+                            <canvas id="wealthChart-spain"></canvas>
+                        </div>
+                        <p class="text-xs text-gray-400 mt-4 text-center">*此预测假设股息复投，且未扣除通胀。实际购买力需考虑通胀因素。</p>
+                    </div>
+
+                    <!-- 核心策略 Tabs (西班牙子分页) -->
+                    <div class="card overflow-hidden">
+                        <div class="flex border-b border-gray-200">
+                            <button onclick="switchTab('strategy-1-spain', 'spain')" id="tab-btn-1-spain" class="flex-1 py-4 text-center text-sm font-medium tab-active transition">
+                                <i class="fas fa-user-shield mr-1"></i> 第一层：个人养老金
+                            </button>
+                            <button onclick="switchTab('strategy-2-spain', 'spain')" id="tab-btn-2-spain" class="flex-1 py-4 text-center text-sm font-medium tab-inactive transition">
+                                <i class="fas fa-chart-line mr-1"></i> 第二层：ETF定投
+                            </button>
+                            <button onclick="switchTab('strategy-3-spain', 'spain')" id="tab-btn-3-spain" class="flex-1 py-4 text-center text-sm font-medium tab-inactive transition">
+                                <i class="fas fa-landmark mr-1"></i> 第三层：国家养老金
+                            </button>
+                        </div>
+
+                        <div class="p-6 bg-white min-h-[300px]">
+                            <!-- 策略 1: 个人养老金 (西班牙) -->
+                            <div id="strategy-1-spain" class="strategy-content-spain">
+                                <h4 class="font-bold text-lg text-yellow-800 mb-3">利用 "Planes de Pensiones" (个人养老金)</h4>
+                                <p class="text-gray-600 mb-4 text-sm">这是西班牙最主要的个人补充养老金工具，核心优势在于税收抵扣。</p>
+                                <div class="space-y-4">
+                                    <div class="flex items-start">
+                                        <div class="bg-yellow-100 p-2 rounded-full mr-3 text-yellow-600"><i class="fas fa-file-invoice-dollar"></i></div>
+                                        <div>
+                                            <h5 class="font-bold text-gray-800">1. 个税(IRPF)抵扣</h5>
+                                            <p class="text-sm text-gray-600">每年存入个人养老金的钱（最高€1,500/年）可以直接从你的应税基数中扣除。如果你的边际税率是30%，存€1,500能立即为你省下€450的税。</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-start">
+                                        <div class="bg-yellow-100 p-2 rounded-full mr-3 text-yellow-600"><i class="fas fa-briefcase"></i></div>
+                                        <div>
+                                            <h5 class="font-bold text-gray-800">2. 公司养老金 (Planes de Empleo)</h5>
+                                            <p class="text-sm text-gray-600">如果你的公司提供，这是个好选择。公司缴费的部分不计入你的个税，且雇主+个人缴费总额度更高（最高可达€10,000/年）。</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-start">
+                                        <div class="bg-yellow-100 p-2 rounded-full mr-3 text-yellow-600"><i class="fas fa-lock"></i></div>
+                                        <div>
+                                            <h5 class="font-bold text-gray-800">3. 缺点：流动性差</h5>
+                                            <p class="text-sm text-gray-600">和意大利的Fondo Pensione一样，这笔钱在退休前（或特定情况如重病、失业）是锁定的。因此不能把所有钱都放进去。</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 策略 2: ETF定投 (西班牙) -->
+                            <div id="strategy-2-spain" class="strategy-content-spain hidden">
+                                <h4 class="font-bold text-lg text-indigo-800 mb-3">打造流动性资金池 (ETF/指数基金)</h4>
+                                <p class="text-gray-600 mb-4 text-sm">你需要一个灵活的投资账户 (Broker) 来应对退休前的需求（如购房）或补充养老金的不足。</p>
+                                <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 mb-4">
+                                    <h5 class="font-bold text-sm text-gray-700 mb-2">推荐组合 (全球定投)</h5>
+                                    <p class="text-sm text-gray-600 mb-2">在西班牙，常用的国际券商如 Degiro, Interactive Brokers 或是本土银行的投资账户 (如 MyInvestor) 都可以用来定投。</p>
+                                    <p class="text-sm text-gray-600">组合与意大利类似：以全球股票ETF (VWCE, SWDA) 为主，搭配全球债券 (AGGH) 来平衡风险。</p>
+                                </div>
+                                <p class="text-xs text-gray-500">
+                                    *操作建议：在西班牙，ETF的资本利得税 (19%-23%) 是在卖出时才计算的。定投(Aportaciones periódicas)是积累财富的好方法。
+                                </p>
+                            </div>
+
+                            <!-- 策略 3: 国家养老金 (西班牙) -->
+                            <div id="strategy-3-spain" class="strategy-content-spain hidden">
+                                <h4 class="font-bold text-lg text-gray-700 mb-3">了解国家养老金 (Pensión Pública)</h4>
+                                <p class="text-gray-600 mb-4 text-sm">这是西班牙退休收入的基石，但你需要知道它的规则。</p>
+                                <ul class="list-disc list-inside space-y-2 text-sm text-gray-700">
+                                    <li><strong>最低缴费年限 (Periodo mínimo de cotización):</strong> 必须至少在西班牙缴纳社保15年，才有资格在退休时领取养老金。</li>
+                                    <li><strong>全额缴费年限 (Pensión completa):</strong> 2024年，你需要缴满36年零6个月才能领取100%的养老金。这个年限还在逐步增加。</li>
+                                    <li><strong>计算基数 (Base reguladora):</strong> 你的退休金是基于你退休前最后25年的平均缴费基数来计算的。</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 右侧：任务系统 (西班牙) -->
+                <div class="space-y-6">
+                    <!-- 资产分配建议 (西班牙) -->
+                    <div class="card p-6 bg-gradient-to-br from-gray-800 to-gray-900 text-white">
+                        <h3 class="font-bold text-lg mb-4">每月 €600 分配建议 (ES)</h3>
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center border-b border-gray-700 pb-2">
+                                <div><div class="font-bold text-yellow-300">个人养老金 (你)</div><div class="text-xs text-gray-400">吃满€1500/年税收红利</div></div>
+                                <div class="text-xl font-mono">€125</div>
+                            </div>
+                            <div class="flex justify-between items-center border-b border-gray-700 pb-2">
+                                <div><div class="font-bold text-orange-300">个人养老金 (配偶)</div><div class="text-xs text-gray-400">吃满€1500/年税收红利</div></div>
+                                <div class="text-xl font-mono">€125</div>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <div><div class="font-bold text-emerald-300">股票/ETF定投</div><div class="text-xs text-gray-400">灵活增值/房产储备</div></div>
+                                <div class="text-xl font-mono">€350</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Level 1 任务卡片 (西班牙) -->
+                    <div class="card p-6 border-l-4 border-yellow-500 relative transition-all duration-300" id="card-level-1-spain">
+                        <div class="flex justify-between items-center mb-4">
+                             <h3 class="font-bold text-gray-800">Level 1: 基础筑基</h3>
+                             <span class="text-xs font-bold text-yellow-600 bg-yellow-100 px-2 py-1 rounded-full" id="progress-text-1-spain">0%</span>
+                        </div>
+                        
+                        <div class="w-full bg-gray-200 rounded-full h-2.5 mb-6">
+                            <div class="bg-yellow-500 h-2.5 rounded-full transition-all duration-500" id="progress-bar-1-spain" style="width: 0%"></div>
+                        </div>
+
+                        <div class="space-y-3">
+                            <label class="flex items-start space-x-3 cursor-pointer p-2 hover:bg-gray-50 rounded transition">
+                                <input type="checkbox" id="task1-spain" class="mt-1 form-checkbox h-5 w-5 text-yellow-600 task-checkbox" onchange="updateAllProgress('spain')">
+                                <span class="text-sm text-gray-600">开设一个个人养老金账户 (Plan de Pensiones)</span>
+                            </label>
+                            <label class="flex items-start space-x-3 cursor-pointer p-2 hover:bg-gray-50 rounded transition">
+                                <input type="checkbox" id="task2-spain" class="mt-1 form-checkbox h-5 w-5 text-yellow-600 task-checkbox" onchange="updateAllProgress('spain')">
+                                <span class="text-sm text-gray-600">设置每月自动转账 €125 到养老金账户</span>
+                            </label>
+                            <label class="flex items-start space-x-3 cursor-pointer p-2 hover:bg-gray-50 rounded transition">
+                                <input type="checkbox" id="task3-spain" class="mt-1 form-checkbox h-5 w-5 text-yellow-600 task-checkbox" onchange="updateAllProgress('spain')">
+                                <span class="text-sm text-gray-600">开设 Degiro, MyInvestor 或其他券商账户</span>
+                            </label>
+                            <label class="flex items-start space-x-3 cursor-pointer p-2 hover:bg-gray-50 rounded transition">
+                                <input type="checkbox" id="task4-spain" class="mt-1 form-checkbox h-5 w-5 text-yellow-600 task-checkbox" onchange="updateAllProgress('spain')">
+                                <span class="text-sm text-gray-600">在券商设置全球ETF的每月自动定投</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Level 2 任务卡片 (西班牙) -->
+                    <div class="card p-6 border-l-4 border-orange-500 relative transition-all duration-500" id="card-level-2-spain">
+                        <!-- 锁定层 -->
+                        <div class="locked-overlay" id="level-2-lock-spain">
+                            <div class="text-center">
+                                <i class="fas fa-lock text-3xl text-gray-400 mb-2"></i>
+                                <p class="text-sm font-bold text-gray-500">完成 Level 1 解锁</p>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-between items-center mb-4">
+                             <h3 class="font-bold text-gray-800">Level 2: 财富滚雪球</h3>
+                             <span class="text-xs font-bold text-orange-600 bg-orange-100 px-2 py-1 rounded-full" id="progress-text-2-spain">0%</span>
+                        </div>
+
+                        <div class="w-full bg-gray-200 rounded-full h-2.5 mb-6">
+                            <div class="bg-orange-500 h-2.5 rounded-full transition-all duration-500" id="progress-bar-2-spain" style="width: 0%"></div>
+                        </div>
+
+                        <div class="space-y-3">
+                             <label class="flex items-start space-x-3 cursor-pointer p-2 hover:bg-gray-50 rounded transition">
+                                <input type="checkbox" id="advTask1-spain" class="mt-1 form-checkbox h-5 w-5 text-orange-600 task-checkbox" onchange="updateAllProgress('spain')">
+                                <div class="flex flex-col">
+                                    <span class="text-sm font-semibold text-gray-700">第一笔退税再投资</span>
+                                    <span class="text-xs text-gray-500">明年报税 (Declaración de la Renta) 后，将退税投入ETF</span>
+                                </div>
+                            </label>
+                            <label class="flex items-start space-x-3 cursor-pointer p-2 hover:bg-gray-50 rounded transition">
+                                <input type="checkbox" id="advTask2-spain" class="mt-1 form-checkbox h-5 w-5 text-orange-600 task-checkbox" onchange="updateAllProgress('spain')">
+                                <div class="flex flex-col">
+                                    <span class="text-sm font-semibold text-gray-700">应急基金达标 (€15k)</span>
+                                    <span class="text-xs text-gray-500">存满6个月生活费，放入高息活期账户 (Cuenta remunerada)</span>
+                                </div>
+                            </label>
+                            <label class="flex items-start space-x-3 cursor-pointer p-2 hover:bg-gray-50 rounded transition">
+                                <input type="checkbox" id="advTask3-spain" class="mt-1 form-checkbox h-5 w-5 text-orange-600 task-checkbox" onchange="updateAllProgress('spain')">
+                                <div class="flex flex-col">
+                                    <span class="text-sm font-semibold text-gray-700">研究公司养老金</span>
+                                    <span class="text-xs text-gray-500">询问公司HR是否提供 Planes de Empleo，了解匹配政策</span>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- 最终胜利卡片 (西班牙) -->
+                    <div id="victory-card-spain" class="card p-6 bg-yellow-50 border border-yellow-300 hidden text-center transform scale-90 transition-all duration-500">
+                        <div class="text-4xl text-yellow-500 mb-2"><i class="fas fa-trophy"></i></div>
+                        <h3 class="text-xl font-bold text-yellow-800 mb-2">系统构建完成！ (ES)</h3>
+                        <p class="text-sm text-yellow-700 mb-4">你的“财富自动运转机器”已经建成。接下来只需要交给时间和复利。</p>
+                        <button onclick="fireConfetti()" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded-full text-sm transition">
+                            庆祝一下！ 🎉
+                        </button>
+                    </div>
+
+                    <!-- AI 智能助手 (西班牙) -->
+                    <div class="card p-6 border-l-4 border-cyan-500 space-y-4">
+                        <h3 class="font-bold text-lg text-gray-800 flex items-center">
+                            <i class="fas fa-brain mr-2 text-cyan-600"></i> AI 智能理财助手 (ES)
+                        </h3>
+                        <p class="text-sm text-gray-600">对这个计划有疑问吗？比如 "什么是IRPF？" 或 "MyInvestor是什么？"</p>
+                        
+                        <div class="flex space-x-2">
+                            <input type="text" id="ai-query-input-spain" class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="在此输入你的问题...">
+                            <button id="ai-submit-btn-spain" class="bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-2 px-4 rounded-lg transition">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                            <button class="ai-preset-btn-spain text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 px-2 py-1 rounded-full">什么是IRPF？</button>
+                            <button class="ai-preset-btn-spain text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 px-2 py-1 rounded-full">Planes de Pensiones有何风险？</button>
+                            <button class="ai-preset-btn-spain text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 px-2 py-1 rounded-full">MyInvestor安全吗？</button>
+                        </div>
+                        <div id="ai-response-area-spain" class="mt-4">
+                            <div id="ai-loading-spain" class="hidden text-center text-gray-500">
+                                <i class="fas fa-spinner fa-spin mr-2"></i> 正在思考中...
+                            </div>
+                            <div id="ai-response-text-spain" class="text-sm text-gray-700 bg-gray-50 p-3 rounded-lg border border-gray-200" style="white-space: pre-wrap;">点击上方预设问题，或输入你的疑问。</div>
+                            <div id="ai-response-sources-spain" class="mt-2 text-xs text-gray-500"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================ -->
+        <!-- 页面 3: 德国 (Germany) - 完整互动应用 -->
+        <!-- ============================ -->
+        <div id="page-germany" class="main-page-content space-y-6 hidden">
+            <!-- 核心摘要卡片 (德国) -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="card p-6 border-l-4 border-gray-700">
+                    <div class="text-gray-500 text-sm mb-1">每月投入目标</div>
+                    <div class="text-3xl font-bold text-gray-800">€700</div>
+                    <div class="text-xs text-green-600 mt-2 flex items-center">
+                        <i class="fas fa-check-circle mr-1"></i> 假设目标
+                    </div>
+                </div>
+                <div class="card p-6 border-l-4 border-red-600">
+                    <div class="text-gray-500 text-sm mb-1">预计退休本金 (67岁)</div>
+                    <div class="text-3xl font-bold text-gray-800" id="projected-capital-germany">€385,000</div>
+                    <div class="text-xs text-red-700 mt-2">
+                        基于年化 5% 保守估算
+                    </div>
+                    <!-- Collapsible Section (德国) -->
+                    <div class="mt-4 border-t border-gray-200 pt-3">
+                        <button onclick="togglePrincipalBreakdown('germany')" class="flex justify-between items-center w-full text-left text-sm font-medium text-gray-600 hover:text-red-700 focus:outline-none">
+                            <span>
+                                <i class="fas fa-archive mr-1 opacity-70"></i>
+                                查看本金构成 (€201,600)
+                            </span>
+                            <i id="breakdown-arrow-germany" class="fas fa-chevron-down transition-transform duration-200"></i>
+                        </button>
+                        <div id="principal-breakdown-germany" class="hidden mt-3 space-y-2 text-xs text-gray-500 pl-4">
+                            <div class="flex justify-between">
+                                <span>企业养老金 (bAV):</span>
+                                <span class="font-medium text-gray-700">€57,600</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>私人ETF定投:</span>
+                                <span class="font-medium text-gray-700">€144,000</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card p-6 border-l-4 border-black">
+                    <div class="text-gray-500 text-sm mb-1">预计月被动收入</div>
+                    <div class="text-3xl font-bold text-gray-800" id="projected-income-germany">€1,280+</div>
+                    <div class="text-xs text-gray-500 mt-2">
+                        不含国家养老金 (GRV)
+                    </div>
+                </div>
+            </div>
+
+            <!-- 主要内容区：左侧图表/计算，右侧策略 (德国) -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                
+                <!-- 左侧：互动模拟器与图表 (德国) -->
+                <div class="lg:col-span-2 space-y-6">
+                    <!-- 模拟器控制台 (德国) -->
+                    <div class="card p-6">
+                        <h3 class="text-lg font-bold mb-4 flex items-center">
+                            <i class="fas fa-calculator mr-2 text-gray-700"></i> 财富增长模拟器 (德国)
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">每月投资 (€)</label>
+                                <input type="range" id="monthly-invest-germany" min="300" max="1500" step="50" value="700" class="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer">
+                                <div class="flex justify-between text-xs text-gray-500 mt-1">
+                                    <span>€300</span>
+                                    <span id="monthly-invest-val-germany" class="font-bold text-gray-800 text-lg">€700</span>
+                                    <span>€1500</span>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">预期年化收益率 (%)</label>
+                                <input type="range" id="annual-return-germany" min="2" max="10" step="0.5" value="5" class="w-full h-2 bg-green-200 rounded-lg appearance-none cursor-pointer">
+                                <div class="flex justify-between text-xs text-gray-500 mt-1">
+                                    <span>2% (保守)</span>
+                                    <span id="annual-return-val-germany" class="font-bold text-green-700 text-lg">5%</span>
+                                    <span>10% (激进)</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 图表区域 (德国) -->
+                        <div class="relative h-64 w-full">
+                            <canvas id="wealthChart-germany"></canvas>
+                        </div>
+                        <p class="text-xs text-gray-400 mt-4 text-center">*此预测假设股息复投，且未扣除通胀。实际购买力需考虑通胀因素。</p>
+                    </div>
+
+                    <!-- 核心策略 Tabs (德国子分页) -->
+                    <div class="card overflow-hidden">
+                        <div class="flex border-b border-gray-200">
+                            <button onclick="switchTab('strategy-1-germany', 'germany')" id="tab-btn-1-germany" class="flex-1 py-4 text-center text-sm font-medium tab-active transition">
+                                <i class="fas fa-building mr-1"></i> 第一层：企业养老金 (bAV)
+                            </button>
+                            <button onclick="switchTab('strategy-2-germany', 'germany')" id="tab-btn-2-germany" class="flex-1 py-4 text-center text-sm font-medium tab-inactive transition">
+                                <i class="fas fa-chart-line mr-1"></i> 第二层：ETF定投 (Sparplan)
+                            </button>
+                            <button onclick="switchTab('strategy-3-germany', 'germany')" id="tab-btn-3-germany" class="flex-1 py-4 text-center text-sm font-medium tab-inactive transition">
+                                <i class="fas fa-landmark mr-1"></i> 第三层：国家养老金 (GRV)
+                            </button>
+                        </div>
+
+                        <div class="p-6 bg-white min-h-[300px]">
+                            <!-- 策略 1: 企业养老金 (德国) -->
+                            <div id="strategy-1-germany" class="strategy-content-germany">
+                                <h4 class="font-bold text-lg text-red-800 mb-3">利用 "bAV" (企业养老金) 的税收优惠</h4>
+                                <p class="text-gray-600 mb-4 text-sm">这是德国工薪族最直接的税收优惠工具，通过“工资转换”实现。</p>
+                                <div class="space-y-4">
+                                    <div class="flex items-start">
+                                        <div class="bg-red-100 p-2 rounded-full mr-3 text-red-600"><i class="fas fa-file-invoice-dollar"></i></div>
+                                        <div>
+                                            <h5 class="font-bold text-gray-800">1. 工资转换 (Entgeltumwandlung)</h5>
+                                            <p class="text-sm text-gray-600">你可以要求公司将你的一部分 *税前* 工资（最高约 €302/月）直接转入bAV合同。这笔钱无需缴纳个税和社会保险费，能立即“省钱”。</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-start">
+                                        <div class="bg-red-100 p-2 rounded-full mr-3 text-red-600"><i class="fas fa-hand-holding-usd"></i></div>
+                                        <div>
+                                            <h5 class="font-bold text-gray-800">2. 雇主强制匹配 (Arbeitgeberzuschuss)</h5>
+                                            <p class="text-sm text-gray-600">由于公司也为你省下了社保费，法律规定雇主必须至少将所省费用的15%作为匹配金，额外投入你的bAV合同。这是“白拿的钱”。</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-start">
+                                        <div class="bg-red-100 p-2 rounded-full mr-3 text-red-600"><i class="fas fa-exclamation-triangle"></i></div>
+                                        <div>
+                                            <h5 class="font-bold text-gray-800">3. 注意事项</h5>
+                                            <p class="text-sm text-gray-600">bAV合同通常由保险公司提供，可能成本较高。退休领取时需要缴税和医保费。但对于稳定工作的人来说，税收优惠和雇主匹配通常是划算的。</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 策略 2: ETF定投 (德国) -->
+                            <div id="strategy-2-germany" class="strategy-content-germany hidden">
+                                <h4 class="font-bold text-lg text-indigo-800 mb-3">ETF定投 (Sparplan)：打造灵活资产</h4>
+                                <p class="text-gray-600 mb-4 text-sm">bAV是锁定的。你必须建立一个灵活的私人投资账户 (Depot)，在德国，ETF定投 (Sparplan) 是最流行的方式。</p>
+                                <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 mb-4">
+                                    <h5 class="font-bold text-sm text-gray-700 mb-2">开户 (Depot)</h5>
+                                    <p class="text-sm text-gray-600 mb-2">你需要一个券商账户 (Depot)。德国有许多低成本选择，如 Trade Republic, Scalable Capital, DKB, ING 等。</p>
+                                    <p class="text-sm text-gray-600">定投全球ETF (如 VWCE, MSCI World) 是最简单、成本最低的长期投资策略。</p>
+                                </div>
+                                <p class="text-xs text-gray-500">
+                                    *操作建议：德国对资本利得有税收优惠（每年有€1,000免税额）。设置一个每月自动执行的 Sparplan，然后忘记它。
+                                </p>
+                            </div>
+
+                            <!-- 策略 3: 国家养老金 (德国) -->
+                            <div id="strategy-3-germany" class="strategy-content-germany hidden">
+                                <h4 class="font-bold text-lg text-gray-700 mb-3">了解国家养老金 (GRV)</h4>
+                                <p class="text-gray-600 mb-4 text-sm">德国的国家养老金 (GRV) 基于“养老金点数”(Entgeltpunkte) 系统。</p>
+                                <ul class="list-disc list-inside space-y-2 text-sm text-gray-700">
+                                    <li><strong>养老金点数:</strong> 如果你当年的收入等于全国平均收入，你获得1个点。收入是平均值的80%，你获得0.8个点。</li>
+                                    <li><strong>退休金计算:</strong> 你的总点数 x 当年的“养老金值”(Rentenwert) = 你的月退休金。</li>
+                                    <li><strong>缴费年限:</strong> 至少需要缴费5年 (Wartezeit) 才能在退休时领取。</li>
+                                    <li><strong>结论:</strong> 和意大利/西班牙一样，国家养老金不足以维持退休生活，必须补充。</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 右侧：任务系统 (德国) -->
+                <div class="space-y-6">
+                    <!-- 资产分配建议 (德国) -->
+                    <div class="card p-6 bg-gradient-to-br from-gray-800 to-gray-900 text-white">
+                        <h3 class="font-bold text-lg mb-4">每月 €700 分配建议 (DE)</h3>
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center border-b border-gray-700 pb-2">
+                                <div><div class="font-bold text-red-300">企业养老金 (bAV)</div><div class="text-xs text-gray-400">工资转换+雇主匹配</div></div>
+                                <div class="text-xl font-mono">€200</div>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <div><div class="font-bold text-emerald-300">私人ETF定投 (Sparplan)</div><div class="text-xs text-gray-400">灵活增值/房产储备</div></div>
+                                <div class="text-xl font-mono">€500</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Level 1 任务卡片 (德国) -->
+                    <div class="card p-6 border-l-4 border-gray-700 relative transition-all duration-300" id="card-level-1-germany">
+                        <div class="flex justify-between items-center mb-4">
+                             <h3 class="font-bold text-gray-800">Level 1: 基础筑基</h3>
+                             <span class="text-xs font-bold text-gray-600 bg-gray-200 px-2 py-1 rounded-full" id="progress-text-1-germany">0%</span>
+                        </div>
+                        
+                        <div class="w-full bg-gray-200 rounded-full h-2.5 mb-6">
+                            <div class="bg-gray-700 h-2.5 rounded-full transition-all duration-500" id="progress-bar-1-germany" style="width: 0%"></div>
+                        </div>
+
+                        <div class="space-y-3">
+                            <label class="flex items-start space-x-3 cursor-pointer p-2 hover:bg-gray-50 rounded transition">
+                                <input type="checkbox" id="task1-germany" class="mt-1 form-checkbox h-5 w-5 text-gray-700 task-checkbox" onchange="updateAllProgress('germany')">
+                                <span class="text-sm text-gray-600">询问HR关于企业养老金(bAV)的提供商和匹配政策</span>
+                            </label>
+                            <label class="flex items-start space-x-3 cursor-pointer p-2 hover:bg-gray-50 rounded transition">
+                                <input type="checkbox" id="task2-germany" class="mt-1 form-checkbox h-5 w-5 text-gray-700 task-checkbox" onchange="updateAllProgress('germany')">
+                                <span class="text-sm text-gray-600">签署bAV的工资转换协议 (Entgeltumwandlung)</span>
+                            </label>
+                            <label class="flex items-start space-x-3 cursor-pointer p-2 hover:bg-gray-50 rounded transition">
+                                <input type="checkbox" id="task3-germany" class="mt-1 form-checkbox h-5 w-5 text-gray-700 task-checkbox" onchange="updateAllProgress('germany')">
+                                <span class="text-sm text-gray-600">开设一个券商账户 (Depot) (如 Scalable, Trade Republic)</span>
+                            </label>
+                            <label class="flex items-start space-x-3 cursor-pointer p-2 hover:bg-gray-50 rounded transition">
+                                <input type="checkbox" id="task4-germany" class="mt-1 form-checkbox h-5 w-5 text-gray-700 task-checkbox" onchange="updateAllProgress('germany')">
+                                <span class="text-sm text-gray-600">在Depot设置每月€500的全球ETF定投 (Sparplan)</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Level 2 任务卡片 (德国) -->
+                    <div class="card p-6 border-l-4 border-red-600 relative transition-all duration-500" id="card-level-2-germany">
+                        <!-- 锁定层 -->
+                        <div class="locked-overlay" id="level-2-lock-germany">
+                            <div class="text-center">
+                                <i class="fas fa-lock text-3xl text-gray-400 mb-2"></i>
+                                <p class="text-sm font-bold text-gray-500">完成 Level 1 解锁</p>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-between items-center mb-4">
+                             <h3 class="font-bold text-gray-800">Level 2: 财富滚雪球</h3>
+                             <span class="text-xs font-bold text-red-600 bg-red-100 px-2 py-1 rounded-full" id="progress-text-2-germany">0%</span>
+                        </div>
+
+                        <div class="w-full bg-gray-200 rounded-full h-2.5 mb-6">
+                            <div class="bg-red-600 h-2.5 rounded-full transition-all duration-500" id="progress-bar-2-germany" style="width: 0%"></div>
+                        </div>
+
+                        <div class="space-y-3">
+                             <label class="flex items-start space-x-3 cursor-pointer p-2 hover:bg-gray-50 rounded transition">
+                                <input type="checkbox" id="advTask1-germany" class="mt-1 form-checkbox h-5 w-5 text-red-600 task-checkbox" onchange="updateAllProgress('germany')">
+                                <div class="flex flex-col">
+                                    <span class="text-sm font-semibold text-gray-700">利用免税额 (Sparer-Pauschbetrag)</span>
+                                    <span class="text-xs text-gray-500">在券商处设置 €1,000 的免税额申请 (Freistellungsauftrag)</span>
+                                </div>
+                            </label>
+                            <label class="flex items-start space-x-3 cursor-pointer p-2 hover:bg-gray-50 rounded transition">
+                                <input type="checkbox" id="advTask2-germany" class="mt-1 form-checkbox h-5 w-5 text-red-600 task-checkbox" onchange="updateAllProgress('germany')">
+                                <div class="flex flex-col">
+                                    <span class="text-sm font-semibold text-gray-700">应急基金达标 (€15k)</span>
+                                    <span class="text-xs text-gray-500">存满6个月生活费，放入高息活期账户 (Tagesgeldkonto)</span>
+                                </div>
+                            </label>
+                            <label class="flex items-start space-x-3 cursor-pointer p-2 hover:bg-gray-50 rounded transition">
+                                <input type="checkbox" id="advTask3-germany" class="mt-1 form-checkbox h-5 w-5 text-red-600 task-checkbox" onchange="updateAllProgress('germany')">
+                                <div class="flex flex-col">
+                                    <span class="text-sm font-semibold text-gray-700">评估里斯特 (Riester-Rente)</span>
+                                    <span class="text-xs text-gray-500">（可选）评估Riester合同是否适合你的家庭情况（如有小孩）</span>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- 最终胜利卡片 (德国) -->
+                    <div id="victory-card-germany" class="card p-6 bg-yellow-50 border border-yellow-300 hidden text-center transform scale-90 transition-all duration-500">
+                        <div class="text-4xl text-yellow-500 mb-2"><i class="fas fa-trophy"></i></div>
+                        <h3 class="text-xl font-bold text-yellow-800 mb-2">System gebaut! (DE)</h3>
+                        <p class="text-sm text-yellow-700 mb-4">你的“财富自动运转机器”已经建成。接下来只需要交给时间和复利。</p>
+                        <button onclick="fireConfetti()" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded-full text-sm transition">
+                            庆祝一下！ 🎉
+                        </button>
+                    </div>
+
+                    <!-- AI 智能助手 (德国) -->
+                    <div class="card p-6 border-l-4 border-cyan-500 space-y-4">
+                        <h3 class="font-bold text-lg text-gray-800 flex items-center">
+                            <i class="fas fa-brain mr-2 text-cyan-600"></i> AI 智能理财助手 (DE)
+                        </h3>
+                        <p class="text-sm text-gray-600">对这个计划有疑问吗？比如 "什么是bAV？" 或 "Scalable Capital是什么？"</p>
+                        
+                        <div class="flex space-x-2">
+                            <input type="text" id="ai-query-input-germany" class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="在此输入你的问题...">
+                            <button id="ai-submit-btn-germany" class="bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-2 px-4 rounded-lg transition">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                            <button class="ai-preset-btn-germany text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 px-2 py-1 rounded-full">什么是bAV？</button>
+                            <button class="ai-preset-btn-germany text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 px-2 py-1 rounded-full">什么是ETF Sparplan？</button>
+                            <button class="ai-preset-btn-germany text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 px-2 py-1 rounded-full">Trade Republic安全吗？</button>
+                        </div>
+                        <div id="ai-response-area-germany" class="mt-4">
+                            <div id="ai-loading-germany" class="hidden text-center text-gray-500">
+                                <i class="fas fa-spinner fa-spin mr-2"></i> 正在思考中...
+                            </div>
+                            <div id="ai-response-text-germany" class="text-sm text-gray-700 bg-gray-50 p-3 rounded-lg border border-gray-200" style="white-space: pre-wrap;">点击上方预设问题，或输入你的疑问。</div>
+                            <div id="ai-response-sources-germany" class="mt-2 text-xs text-gray-500"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- ============================ -->
+        <!-- 页面 4: 欧盟跨境 (EU) - 功能模块 -->
+        <!-- ============================ -->
+        <div id="page-crossborder" class="main-page-content space-y-6 hidden">
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- 左侧：跨境策略 -->
+                <div class="lg:col-span-2 space-y-6">
+                    <div class="card overflow-hidden">
+                        <h3 class="text-xl font-bold p-6 pb-4 text-blue-800"><i class="fas fa-globe-europe mr-2"></i> 欧盟跨境 (EU) 规则与工具</h3>
+                        <!-- 子分页 Tabs -->
+                        <div class="flex border-b border-gray-200">
+                            <button onclick="switchTab('strategy-1-crossborder', 'crossborder')" id="tab-btn-1-crossborder" class="flex-1 py-4 text-center text-sm font-medium tab-active transition">
+                                <i class="fas fa-landmark mr-1"></i> 国家养老金规则
+                            </button>
+                            <button onclick="switchTab('strategy-2-crossborder', 'crossborder')" id="tab-btn-2-crossborder" class="flex-1 py-4 text-center text-sm font-medium tab-inactive transition">
+                                <i class="fas fa-plane-departure mr-1"></i> 泛欧养老金 (PEPP)
+                            </button>
+                            <button onclick="switchTab('strategy-3-crossborder', 'crossborder')" id="tab-btn-3-crossborder" class="flex-1 py-4 text-center text-sm font-medium tab-inactive transition">
+                                <i class="fas fa-tasks mr-1"></i> 跨境任务清单
+                            </button>
+                        </div>
+
+                        <div class="p-6 bg-white min-h-[300px]">
+                            <!-- 策略 1: 国家养老金规则 -->
+                            <div id="strategy-1-crossborder" class="strategy-content-crossborder">
+                                <h4 class="font-bold text-lg text-blue-800 mb-3">规则一：国家养老金 (Pro-Rata)</h4>
+                                <p class="text-gray-600 mb-4 text-sm">如果您在多个欧盟国家工作过，您的国家养老金(第一支柱)不会丢失，而是会被汇总计算。</p>
+                                <ul class="list-disc list-inside space-y-4 text-sm text-gray-700">
+                                    <li>
+                                        <strong>缴费年限合计 (Totalisation)</strong><br>
+                                        欧盟法规 (EC 883/2004) 确保您不会丢失任何缴费记录。
+                                        <br>
+                                        <span class="text-xs text-gray-500 block mt-1 p-2 bg-gray-50 rounded border border-gray-200"><strong>举例:</strong> 意大利要求至少缴费20年才能领退休金。如果您在意大利只工作了15年，但在德国工作了10年。欧盟会将它们合计 (15+10=25年)，您就满足了意大利的20年门槛。</span>
+                                    </li>
+                                    <li>
+                                        <strong>分别领取 (Pro-Rata)</strong><br>
+                                        您不会只从一个国家领钱。当您在意大利退休时，INPS会联系德国和西班牙的养老机构。
+                                        <br>
+                                        <span class="text-xs text-gray-500 block mt-1 p-2 bg-gray-50 rounded border border-gray-200">
+                                            - 意大利 将根据您在意大利的15年缴费，支付给您一份 *pro-rata* (按比例) 的养老金。
+                                            <br>
+                                            - 德国 将根据您在德国的10年缴费，支付给您一份 *pro-rata* 的养老金。
+                                            <br>
+                                            - 您会收到多份养老金。
+                                        </span>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <!-- 策略 2: PEPP 详解 -->
+                            <div id="strategy-2-crossborder" class="strategy-content-crossborder hidden">
+                                <h4 class="font-bold text-lg text-blue-800 mb-3">规则二：泛欧个人养老金 (PEPP)</h4>
+                                <p class="text-gray-600 mb-4 text-sm">PEPP (Pan-European Personal Pension Product) 是一种新型的、可自愿购买的个人养老金，专为欧盟内的移动公民设计。</p>
+                                <div class="space-y-4">
+                                    <div class="flex items-start">
+                                        <div class="bg-blue-100 p-2 rounded-full mr-3 text-blue-600"><i class="fas fa-suitcase-rolling"></i></div>
+                                        <div>
+                                            <h5 class="font-bold text-gray-800">核心优势：便携性 (Portability)</h5>
+                                            <p class="text-sm text-gray-600">您可以在一个国家（如意大利）开设PEPP账户，当您搬到德国或西班牙工作时，您可以**继续向同一个PEPP账户缴费**，无需开设新账户。它会自动适应当地的税收优惠政策。</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-start">
+                                        <div class="bg-blue-100 p-2 rounded-full mr-3 text-blue-600"><i class="fas fa-euro-sign"></i></div>
+                                        <div>
+                                            <h5 class="font-bold text-gray-800">成本与透明度</h5>
+                                            <p class="text-sm text-gray-600">PEPP受到严格监管，“基本PEPP”的**总费用上限为1%**，透明度高。提供商必须清晰展示费用和历史表现。</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-start">
+                                        <div class="bg-blue-100 p-2 rounded-full mr-3 text-blue-600"><i class="fas fa-balance-scale-right"></i></div>
+                                        <div>
+                                            <h5 class="font-bold text-gray-800">与本国养老金对比</h5>
+                                            <p class="text-sm text-gray-600">PEPP**不能**像意大利的 Fondo Negoziale 那样获得“雇主匹配金”。因此，它更适合作为**补充**，或者适合自由职业者、经常跨国工作的人。</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 策略 3: 跨境任务清单 -->
+                            <div id="strategy-3-crossborder" class="strategy-content-crossborder hidden">
+                                <h4 class="font-bold text-lg text-blue-800 mb-3">跨境工作任务清单 (Checklist)</h4>
+                                <p class="text-gray-600 mb-4 text-sm">当您从一个欧盟国家搬到另一个国家工作时，不要忘记这些关键步骤：</p>
+                                <div class="space-y-3">
+                                    <label class="flex items-start space-x-3 cursor-pointer p-2 hover:bg-gray-50 rounded transition">
+                                        <input type="checkbox" id="task1-crossborder" class="mt-1 form-checkbox h-5 w-5 text-blue-600 task-checkbox">
+                                        <span class="text-sm text-gray-600">离开旧国家前，申请 **U1 表格** (用于汇总失业保险记录)。</span>
+                                    </label>
+                                    <label class="flex items-start space-x-3 cursor-pointer p-2 hover:bg-gray-50 rounded transition">
+                                        <input type="checkbox" id="task2-crossborder" class="mt-1 form-checkbox h-5 w-5 text-blue-600 task-checkbox">
+                                        <span class="text-sm text-gray-600">离开旧国家前，申请 **E104 / S041 表格** (用于汇总医疗保险记录)。</span>
+                                    </label>
+                                    <label class="flex items-start space-x-3 cursor-pointer p-2 hover:bg-gray-50 rounded transition">
+                                        <input type="checkbox" id="task3-crossborder" class="mt-1 form-checkbox h-5 w-5 text-blue-600 task-checkbox">
+                                        <span class="text-sm text-gray-600">到达新国家后，申请**税号** (Codice Fiscale, NIE, Steuer-ID)。</span>
+                                    </label>
+                                    <label class="flex items-start space-x-3 cursor-pointer p-2 hover:bg-gray-50 rounded transition">
+                                        <input type="checkbox" id="task4-crossborder" class="mt-1 form-checkbox h-5 w-5 text-blue-600 task-checkbox">
+                                        <span class="text-sm text-gray-600">在新国家社保机构 (INPS, Seguridad Social, Deutsche Rentenversicherung) 注册。</span>
+                                    </label>
+                                    <label class="flex items-start space-x-3 cursor-pointer p-2 hover:bg-gray-50 rounded transition">
+                                        <input type="checkbox" id="task5-crossborder" class="mt-1 form-checkbox h-5 w-5 text-blue-600 task-checkbox">
+                                        <span class="text-sm text-gray-600">（重要）向旧国家的税务局**注销税务居民身份** (Anagrafe, Modelo 030)，避免双重征税。</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 右侧：AI 助手 (跨境) -->
+                <div class="space-y-6">
+                    <!-- AI 智能助手 (跨境) -->
+                    <div class="card p-6 border-l-4 border-cyan-500 space-y-4">
+                        <h3 class="font-bold text-lg text-gray-800 flex items-center">
+                            <i class="fas fa-brain mr-2 text-cyan-600"></i> AI 跨境助手 (EU)
+                        </h3>
+                        <p class="text-sm text-gray-600">对跨境规则有疑问吗？</p>
+                        
+                        <div class="flex space-x-2">
+                            <input type="text" id="ai-query-input-crossborder" class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="在此输入你的问题...">
+                            <button id="ai-submit-btn-crossborder" class="bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-2 px-4 rounded-lg transition">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                            <button class="ai-preset-btn-crossborder text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 px-2 py-1 rounded-full">什么是PEPP？</button>
+                            <button class="ai-preset-btn-crossborder text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 px-2 py-1 rounded-full">什么是Pro-Rata养老金？</button>
+                            <button class="ai-preset-btn-crossborder text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 px-2 py-1 rounded-full">U1表格有什么用？</button>
+                        </div>
+                        <div id="ai-response-area-crossborder" class="mt-4">
+                            <div id="ai-loading-crossborder" class="hidden text-center text-gray-500">
+                                <i class="fas fa-spinner fa-spin mr-2"></i> 正在思考中...
+                            </div>
+                            <div id="ai-response-text-crossborder" class="text-sm text-gray-700 bg-gray-50 p-3 rounded-lg border border-gray-200" style="white-space: pre-wrap;">点击上方预设问题，或输入你的疑问。</div>
+                            <div id="ai-response-sources-crossborder" class="mt-2 text-xs text-gray-500"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <footer class="text-center text-xs text-gray-500 py-8 border-t border-gray-200 mt-8">
+            <p>免责声明：本工具仅供教育规划参考，不构成具体投资建议。意大利税法可能会发生变化。</p>
+            <p>Generated by Gemini AI for Personal Finance Planning</p>
+        </footer>
+
+    </main>
+
+    <!-- ########################################## -->
+    <!-- #      REFACTORED JAVASCRIPT LOGIC       # -->
+    <!-- ########################################## -->
+    <script>
+        // --- 全局变量和 Chart 实例 ---
+        let chartInstances = {
+            italy: null,
+            spain: null,
+            germany: null
+        };
+
+        // --- 核心逻辑 1: 图表与计算 (已重构) ---
+        function initChart(country) {
+            const chartId = `wealthChart-${country}`;
+            const ctx = document.getElementById(chartId)?.getContext('2d');
+            if (!ctx) return; // 如果画布不存在，则退出
+
+            if (chartInstances[country]) {
+                chartInstances[country].destroy();
+            }
+            
+            chartInstances[country] = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: [],
+                    datasets: [
+                        { label: '本金投入 (累计)', data: [], backgroundColor: 'rgba(59, 130, 246, 0.7)', stack: 'Stack 0' },
+                        { label: '复利收益 (累计)', data: [], backgroundColor: 'rgba(16, 185, 129, 0.7)', stack: 'Stack 0' }
+                    ]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    scales: { x: { stacked: true, grid: { display: false } }, y: { stacked: true, beginAtZero: true } },
+                    plugins: { tooltip: { mode: 'index', intersect: false, callbacks: { label: function(context) { let label = context.dataset.label || ''; if (label) { label += ': '; } if (context.parsed.y !== null) { label += new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR' }).format(context.parsed.y); } return label; } } } }
+                }
+            });
+        }
+
+        function calculateAndRender(country) {
+            const monthlyInvestEl = document.getElementById(`monthly-invest-${country}`);
+            const annualReturnEl = document.getElementById(`annual-return-${country}`);
+            
+            // 如果元素不存在 (例如跨境页)，则退出
+            if (!monthlyInvestEl || !annualReturnEl) return;
+
+            const monthlyInvest = parseInt(monthlyInvestEl.value);
+            const annualReturnRate = parseFloat(annualReturnEl.value) / 100;
+            const years = 24; // 43岁到67岁
+            
+            document.getElementById(`monthly-invest-val-${country}`).textContent = `€${monthlyInvest}`;
+            document.getElementById(`annual-return-val-${country}`).textContent = `${(annualReturnRate * 100).toFixed(1)}%`;
+
+            let labels = [], dataPrincipal = [], dataInterest = [];
+            let totalPrincipal = 0, totalAmount = 0;
+            const monthlyRate = annualReturnRate / 12;
+
+            for (let y = 1; y <= years; y++) {
+                labels.push(`${43 + y}岁`);
+                for (let m = 0; m < 12; m++) {
+                    totalAmount = (totalAmount + monthlyInvest) * (1 + monthlyRate);
+                    totalPrincipal += monthlyInvest;
+                }
+                dataPrincipal.push(totalPrincipal);
+                dataInterest.push(totalAmount - totalPrincipal);
+            }
+
+            const finalAmount = totalAmount;
+            const monthlyPassiveIncome = (finalAmount * 0.04) / 12; // 4% 提取法则
+
+            document.getElementById(`projected-capital-${country}`).textContent = new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(finalAmount);
+            document.getElementById(`projected-income-${country}`).textContent = new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(monthlyPassiveIncome);
+
+            const chart = chartInstances[country];
+            if (chart) {
+                chart.data.labels = labels;
+                chart.data.datasets[0].data = dataPrincipal;
+                chart.data.datasets[1].data = dataInterest;
+                chart.update();
+            }
+        }
+
+        // --- 核心逻辑 2: 子分页切换 (已重构) ---
+        function switchTab(tabId, country) {
+            // 隐藏所有该国家的子内容
+            document.querySelectorAll(`.strategy-content-${country}`).forEach(el => el.classList.add('hidden'));
+            const element = document.getElementById(tabId);
+            if(element) element.classList.remove('hidden');
+
+            // 重置所有该国家的子Tab按钮
+            document.querySelectorAll(`[id^='tab-btn-'][id$='-${country}']`).forEach(btn => {
+                btn.classList.remove('tab-active', 'text-blue-600', 'border-blue-600');
+                btn.classList.add('tab-inactive', 'text-gray-500');
+            });
+            
+            // 激活点击的子Tab按钮
+            const activeBtn = document.getElementById(tabId.replace('strategy-', 'tab-btn-'));
+            if (activeBtn) {
+                activeBtn.classList.remove('tab-inactive', 'text-gray-500');
+                activeBtn.classList.add('tab-active', 'text-blue-600', 'border-blue-600');
+            }
+        }
+
+        // --- 核心逻辑 3: 游戏化任务系统 (已重构) ---
+        
+        function fireConfetti() {
+            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+        }
+
+        const taskLists = {
+            italy: {
+                level1: ['task1-italy', 'task2-italy', 'task3-italy', 'task4-italy'],
+                level2: ['advTask1-italy', 'advTask2-italy', 'advTask3-italy']
+            },
+            spain: {
+                level1: ['task1-spain', 'task2-spain', 'task3-spain', 'task4-spain'],
+                level2: ['advTask1-spain', 'advTask2-spain', 'advTask3-spain']
+            },
+            germany: {
+                level1: ['task1-germany', 'task2-germany', 'task3-germany', 'task4-germany'],
+                level2: ['advTask1-germany', 'advTask2-germany', 'advTask3-germany']
+            }
+            // 跨境清单不在此处处理，因为它没有Level
+        };
+
+        function updateAllProgress(country) {
+            const tasks = taskLists[country];
+            if (!tasks) return;
+
+            const { level1: level1Tasks, level2: level2Tasks } = tasks;
+            let statusObj = JSON.parse(localStorage.getItem(`retirementTodo-${country}`) || '{}');
+
+            // --- Level 1 ---
+            let l1Completed = 0;
+            level1Tasks.forEach(id => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                const isChecked = el.checked;
+                if (isChecked) l1Completed++;
+                statusObj[id] = isChecked;
+            });
+            const l1Percent = (l1Completed / level1Tasks.length) * 100;
+            
+            // Render Level 1 UI
+            const progressBar1 = document.getElementById(`progress-bar-1-${country}`);
+            const progressText1 = document.getElementById(`progress-text-1-${country}`);
+            const cardLevel1 = document.getElementById(`card-level-1-${country}`);
+            
+            if (progressBar1 && progressText1 && cardLevel1) {
+                progressBar1.style.width = l1Percent + '%';
+                progressText1.innerText = Math.round(l1Percent) + '%';
+
+                let baseColor, baseColorDark, baseColorLight;
+                if (country === 'italy') {
+                    baseColor = 'blue'; baseColorDark = 'blue-600'; baseColorLight = 'blue-100';
+                } else if (country === 'spain') {
+                    baseColor = 'yellow'; baseColorDark = 'yellow-500'; baseColorLight = 'yellow-100';
+                } else if (country === 'germany') {
+                    baseColor = 'gray'; baseColorDark = 'gray-700'; baseColorLight = 'gray-200';
+                }
+
+                if (l1Percent === 100) {
+                     progressBar1.classList.remove(`bg-${baseColorDark}`);
+                     progressBar1.classList.add('bg-green-500');
+                     progressText1.classList.remove(`text-${baseColor}-600`, `bg-${baseColorLight}`);
+                     if(country === 'germany') progressText1.classList.remove('text-gray-600');
+                     progressText1.classList.add('text-green-600', 'bg-green-100');
+                     cardLevel1.classList.add('opacity-60');
+                } else {
+                     progressBar1.classList.add(`bg-${baseColorDark}`);
+                     progressBar1.classList.remove('bg-green-500');
+                     progressText1.classList.add(`text-${baseColor}-600`, `bg-${baseColorLight}`);
+                     if(country === 'germany') progressText1.classList.add('text-gray-600');
+                     progressText1.classList.remove('text-green-600', 'bg-green-100');
+                     cardLevel1.classList.remove('opacity-60');
+                }
+            }
+
+            // --- Level 2 ---
+            const level2Lock = document.getElementById(`level-2-lock-${country}`);
+            const badge = document.getElementById(`current-level-badge-${country}`);
+            
+            if (l1Percent === 100) {
+                if(level2Lock) level2Lock.classList.add('hidden');
+                if(badge) {
+                    badge.innerText = "LEVEL 2: 财富滚雪球";
+                    badge.classList.replace('text-yellow-400', 'text-purple-300');
+                }
+            } else {
+                if(level2Lock) level2Lock.classList.remove('hidden');
+                if(badge) {
+                    badge.innerText = "LEVEL 1: 基础筑基";
+                    badge.classList.replace('text-purple-300', 'text-yellow-400');
+                }
+                level2Tasks.forEach(id => {
+                    const el = document.getElementById(id);
+                    if(el) el.checked = false;
+                    statusObj[id] = false;
+                });
+            }
+
+            let l2Completed = 0;
+            level2Tasks.forEach(id => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                const isChecked = el.checked;
+                if (isChecked) l2Completed++;
+                statusObj[id] = isChecked;
+            });
+            const l2Percent = (l2Completed / level2Tasks.length) * 100;
+
+            // Render Level 2 UI
+            const progressBar2 = document.getElementById(`progress-bar-2-${country}`);
+            const progressText2 = document.getElementById(`progress-text-2-${country}`);
+            const victoryCard = document.getElementById(`victory-card-${country}`);
+            
+            if(progressBar2 && progressText2 && victoryCard) {
+                progressBar2.style.width = l2Percent + '%';
+                progressText2.innerText = Math.round(l2Percent) + '%';
+                
+                let baseColor, baseColorDark, baseColorLight;
+                if (country === 'italy') {
+                    baseColor = 'purple'; baseColorDark = 'purple-600'; baseColorLight = 'purple-100';
+                } else if (country === 'spain') {
+                    baseColor = 'orange'; baseColorDark = 'orange-500'; baseColorLight = 'orange-100';
+                } else if (country === 'germany') {
+                    baseColor = 'red'; baseColorDark = 'red-600'; baseColorLight = 'red-100';
+                }
+                
+                if (l2Percent === 100) {
+                     progressBar2.classList.remove(`bg-${baseColorDark}`, `bg-${baseColor}-500`);
+                     progressBar2.classList.add('bg-green-500');
+                     progressText2.classList.remove(`text-${baseColor}-600`, `bg-${baseColorLight}`);
+                     progressText2.classList.add('text-green-600', 'bg-green-100');
+                     
+                     victoryCard.classList.remove('hidden');
+                     setTimeout(() => victoryCard.classList.remove('scale-90'), 100);
+                     
+                     if(badge) {
+                         badge.innerText = "MAX LEVEL: 财务自由系统";
+                         badge.classList.add('text-green-300');
+                     }
+                     
+                     if (!localStorage.getItem(`retirementCompleted-${country}`)) {
+                         fireConfetti();
+                         localStorage.setItem(`retirementCompleted-${country}`, 'true');
+                     }
+                } else {
+                     progressBar2.classList.add(baseColorDark);
+                     progressBar2.classList.remove('bg-green-500');
+                     progressText2.classList.add(`text-${baseColor}-600`, `bg-${baseColorLight}`);
+                     progressText2.classList.remove('text-green-600', 'bg-green-100');
+                     victoryCard.classList.add('hidden');
+                     localStorage.removeItem(`retirementCompleted-${country}`);
+                }
+            }
+            localStorage.setItem(`retirementTodo-${country}`, JSON.stringify(statusObj));
+        }
+
+        function loadTodo(country) {
+            const tasks = taskLists[country];
+            if (!tasks) return;
+
+            const saved = localStorage.getItem(`retirementTodo-${country}`);
+            if (saved) {
+                const statusObj = JSON.parse(saved);
+                for (const [id, isChecked] of Object.entries(statusObj)) {
+                    const el = document.getElementById(id);
+                    if (el) el.checked = isChecked;
+                }
+            }
+            updateAllProgress(country); // Sync UI
+        }
+
+        // --- 核心逻辑 4: AI 助手 (已重构) ---
+        const systemPrompts = {
+            italy: `
+你是一个专业的意大利理财规划助手。
+你的任务是根据当前页面上显示的“米兰退休蓝图”来回答用户的问题。
+这个蓝图是为一个43岁、坐标米兰的人设计的，计划在67岁退休，每月投资700欧元。
+核心策略包括：
+1. 利用意大利补充养老金 (Fondo Pensione) 的TFR和每年5164欧元的税收抵扣 (Deduzione)。
+2. 定投全球ETF (如VWCE, SWDA) 作为流动资金。
+3. 将买房(Prima Casa)作为中期目标，但不优先于养老金。
+在回答时：
+- 始终结合这个蓝图的背景。
+- 使用中文回答。
+- 解释要清晰、简洁、专业。
+- 利用Google搜索工具来获取关于意大利税法、特定金融产品（如Directa, VWCE）或经济术语（如TFR, PAC）的最新和准确定义。`,
+            spain: `
+你是一个专业的西班牙理财规划助手。
+你的任务是根据当前页面上显示的“西班牙退休蓝图”来回答用户的问题。
+这个蓝图是为一个43岁的人设计的，计划在67岁退休，每月投资600欧元。
+核心策略包括：
+1. 利用西班牙个人养老金 (Planes de Pensiones) 每年€1,500的税收抵扣 (IRPF)。
+2. 定投全球ETF (如VWCE) 作为流动资金池，用于购房或补充退休金。
+3. 了解国家养老金 (Pensión Pública) 至少需要缴15年的规则。
+在回答时：
+- 始终结合这个蓝图的背景。
+- 使用中文回答。
+- 解释要清晰、简洁、专业。
+- 利用Google搜索工具来获取关于西班牙税法、特定金融产品（如MyInvestor, VWCE）或经济术语（如IRPF, Gestora, Vida Laboral）的最新和准确定义。`,
+            germany: `
+你是一个专业的德国理财规划助手。
+你的任务是根据当前页面上显示的“德国退休蓝图”来回答用户的问题。
+这个蓝图是为一个43岁的人设计的，计划在67岁退休，每月投资700欧元。
+核心策略包括：
+1. 利用企业养老金 (bAV) 的工资转换 (Entgeltumwandlung) 和雇主匹配来避税。
+2. 定投全球ETF (ETF Sparplan) 作为灵活的私人养老金支柱。
+3. 了解国家养老金 (GRV) 是基于“养老金点数”计算的。
+在回答时：
+- 始终结合这个蓝图的背景。
+- 使用中文回答。
+- 解释要清晰、简洁、专业。
+- 利用Google搜索工具来获取关于德国税法、特定金融产品（如Scalable Capital, Trade Republic, VWCE）或经济术语（如bAV, Sparplan, GRV, Depot, Riester-Rente）的最新和准确定义。`,
+            crossborder: `
+你是一个专业的欧盟跨境金融助手。
+你的任务是回答关于在欧盟内部（特别是意大利、德国、西班牙之间）移动工作和生活的养老金及社保规则。
+核心概念包括：
+1. 国家养老金的“缴费年限合计 (Totalisation)”和“按比例领取 (Pro-Rata)”。
+2. “泛欧个人养老金 (PEPP)”作为可携带的第三支柱。
+3. 重要的跨境表格，如 U1 (失业) 和 E104/S041 (医疗)。
+在回答时：
+- 保持中立，解释规则。
+- 使用中文回答。
+- 解释要清晰、简洁、专业。
+- 利用Google搜索工具来获取关于欧盟法规 (如 EC 883/2004)、PEPP 或特定表格的最新和准确定义。`
+        };
+
+        async function fetchWithBackoff(url, options, retries = 3, delay = 1000) {
+            try {
+                const response = await fetch(url, options);
+                if (!response.ok) {
+                    if (response.status === 429 && retries > 0) {
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                        return fetchWithBackoff(url, options, retries - 1, delay * 2);
+                    }
+                    throw new Error(`API Error: ${response.status} ${response.statusText}`);
+                }
+                return response.json();
+            } catch (error) {
+                if (retries > 0) {
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                    return fetchWithBackoff(url, options, retries - 1, delay * 2);
+                }
+                throw error;
+            }
+        }
+
+        async function handleAiQuery(country) {
+            const aiQueryInput = document.getElementById(`ai-query-input-${country}`);
+            const aiLoading = document.getElementById(`ai-loading-${country}`);
+            const aiResponseText = document.getElementById(`ai-response-text-${country}`);
+            const aiResponseSources = document.getElementById(`ai-response-sources-${country}`);
+            const aiSubmitBtn = document.getElementById(`ai-submit-btn-${country}`);
+            const systemPrompt = systemPrompts[country];
+
+            if (!aiQueryInput || !aiQueryInput.value) return;
+            const userQuery = aiQueryInput.value.trim();
+            if (!userQuery || !systemPrompt) return;
+
+            aiLoading.classList.remove('hidden');
+            aiResponseText.classList.add('hidden');
+            aiResponseText.textContent = ''; 
+            aiResponseSources.innerHTML = '';
+            aiSubmitBtn.disabled = true;
+
+            try {
+                const apiKey = ""; // Leave as-is
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+
+                const payload = {
+                    contents: [{ parts: [{ text: userQuery }] }],
+                    tools: [{ "google_search": {} }], 
+                    systemInstruction: { parts: [{ text: systemPrompt }] },
+                };
+
+                const result = await fetchWithBackoff(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const candidate = result.candidates?.[0];
+                if (candidate && candidate.content?.parts?.[0]?.text) {
+                    aiResponseText.textContent = candidate.content.parts[0].text; 
+                    aiResponseText.classList.remove('hidden');
+
+                    let sources = [];
+                    const groundingMetadata = candidate.groundingMetadata;
+                    if (groundingMetadata && groundingMetadata.groundingAttributions) {
+                        sources = groundingMetadata.groundingAttributions
+                            .map(attr => ({ uri: attr.web?.uri, title: attr.web?.title }))
+                            .filter(s => s.uri && s.title); 
+                    }
+                    if (sources.length > 0) {
+                        aiResponseSources.innerHTML = '<p class="font-bold mt-3">参考来源:</p><ul class="list-disc list-inside">' +
+                            sources.map(s => `<li><a href="${s.uri}" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">${s.title}</a></li>`).join('') +
+                            '</ul>';
+                    }
+                } else {
+                    aiResponseText.textContent = '抱歉，AI助手暂时无法回答这个问题。';
+                    aiResponseText.classList.remove('hidden');
+                }
+            } catch (error) {
+                aiResponseText.textContent = '抱歉，AI助手连接失败。请稍后再试。';
+                aiResponseText.classList.remove('hidden');
+            } finally {
+                aiLoading.classList.add('hidden');
+                aiSubmitBtn.disabled = false;
+            }
+        }
+
+        // --- 核心逻辑 5: 本金明细切换 (已重构) ---
+        function togglePrincipalBreakdown(country) {
+            const breakdownDiv = document.getElementById(`principal-breakdown-${country}`);
+            const arrowIcon = document.getElementById(`breakdown-arrow-${country}`);
+            if (!breakdownDiv || !arrowIcon) return;
+            
+            const isHidden = breakdownDiv.classList.contains('hidden');
+            if (isHidden) {
+                breakdownDiv.classList.remove('hidden');
+                arrowIcon.classList.add('rotate-180');
+            } else {
+                breakdownDiv.classList.add('hidden');
+                arrowIcon.classList.remove('rotate-180');
+            }
+        }
+
+        // --- 核心逻辑 6: 主分页切换 ---
+        function switchMainTab(tabId) {
+            const subtitle = document.getElementById('nav-subtitle');
+            const levelBadgeLabel = document.getElementById('level-badge-label');
+            
+            // 1. 隐藏所有主页面
+            document.querySelectorAll('.main-page-content').forEach(el => el.classList.add('hidden'));
+            
+            // 2. 隐藏所有等级徽章
+            document.querySelectorAll('[id^="current-level-badge-"]').forEach(el => el.classList.add('hidden'));
+            
+            // 3. 显示点击的主页面
+            const element = document.getElementById(tabId);
+            if(element) element.classList.remove('hidden');
+            
+            // 4. 重置所有主分页按钮
+            const mainTabs = ['main-tab-btn-italy', 'main-tab-btn-spain', 'main-tab-btn-germany', 'main-tab-btn-crossborder'];
+            mainTabs.forEach(btnId => {
+                const btn = document.getElementById(btnId);
+                if (btn) {
+                    btn.classList.remove('main-tab-active');
+                    btn.classList.add('main-tab-inactive');
+                }
+            });
+            
+            let activeBtnId = '';
+            let subtitleText = '';
+            let activeBadgeId = '';
+            let showBadgeLabel = true;
+
+            switch (tabId) {
+                case 'page-italy':
+                    activeBtnId = 'main-tab-btn-italy';
+                    subtitleText = "当前: 意大利米兰个人计划";
+                    activeBadgeId = 'current-level-badge-italy';
+                    break;
+                case 'page-spain':
+                    activeBtnId = 'main-tab-btn-spain';
+                    subtitleText = "当前: 西班牙个人计划";
+                    activeBadgeId = 'current-level-badge-spain';
+                    break;
+                case 'page-germany':
+                    activeBtnId = 'main-tab-btn-germany';
+                    subtitleText = "当前: 德国个人计划";
+                    activeBadgeId = 'current-level-badge-germany';
+                    break;
+                case 'page-crossborder':
+                    activeBtnId = 'main-tab-btn-crossborder';
+                    subtitleText = "当前: 欧盟跨境规则";
+                    showBadgeLabel = false; // 跨境页不显示等级
+                    break;
+            }
+            
+            // 5. 激活主Tab按钮
+            const activeBtn = document.getElementById(activeBtnId);
+            if (activeBtn) {
+                activeBtn.classList.remove('main-tab-inactive');
+                activeBtn.classList.add('main-tab-active');
+            }
+
+            // 6. 更新副标题和徽章显示
+            if (subtitle) {
+                subtitle.textContent = subtitleText;
+            }
+            if (levelBadgeLabel) {
+                levelBadgeLabel.style.display = showBadgeLabel ? 'block' : 'none';
+            }
+            if (activeBadgeId) {
+                const badge = document.getElementById(activeBadgeId);
+                if(badge) badge.classList.remove('hidden');
+            }
+        }
+
+
+        // --- 应用程序初始化函数 ---
+        function initializeApp(country) {
+            // 'crossborder' 有 AI 但没有 taskLists
+            const tasks = taskLists[country];
+            
+            // 为国家页面初始化
+            if (tasks) {
+                // 1. 初始化图表
+                initChart(country);
+                calculateAndRender(country);
+                
+                // 2. 加载待办事项
+                loadTodo(country);
+                
+                // 3. 绑定图表模拟器事件
+                const monthlyInvestEl = document.getElementById(`monthly-invest-${country}`);
+                const annualReturnEl = document.getElementById(`annual-return-${country}`);
+                if (monthlyInvestEl) {
+                    monthlyInvestEl.addEventListener('input', () => calculateAndRender(country));
+                }
+                if (annualReturnEl) {
+                    annualReturnEl.addEventListener('input', () => calculateAndRender(country));
+                }
+            }
+            
+            // 4. 绑定AI助手事件 (所有页面都有AI)
+            const aiSubmitBtn = document.getElementById(`ai-submit-btn-${country}`);
+            const aiQueryInput = document.getElementById(`ai-query-input-${country}`);
+            if (aiSubmitBtn) {
+                aiSubmitBtn.addEventListener('click', () => handleAiQuery(country));
+            }
+            if (aiQueryInput) {
+                aiQueryInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') handleAiQuery(country);
+                });
+            }
+            document.querySelectorAll(`.ai-preset-btn-${country}`).forEach(btn => {
+                btn.addEventListener('click', () => {
+                    if (aiQueryInput) {
+                        aiQueryInput.value = btn.textContent;
+                        handleAiQuery(country);
+                    }
+                });
+            });
+        }
+
+        // --- 页面加载时，初始化所有已配置的国家标签页 ---
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeApp('italy');
+            initializeApp('spain');
+            initializeApp('germany');
+            initializeApp('crossborder'); // 初始化跨境页的AI助手
+        });
+
+    </script>
+</body>
+</html>
