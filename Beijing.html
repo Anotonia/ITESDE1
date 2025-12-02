@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>北京市养老金“理想状态”估算报告</title>
+    <!-- 引入 Tailwind CSS 以便快速美化页面 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 使用 Inter 字体 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', 'Noto Sans SC', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+    <div class="container max-w-4xl mx-auto p-6 md:p-10 bg-white rounded-lg shadow-2xl my-10">
+        
+        <!-- 1. 标题 -->
+        <h1 class="text-3xl md:text-4xl font-bold text-center text-blue-800 mb-6">
+            北京市养老金“理想状态”估算报告
+        </h1>
+        <p class="text-center text-gray-600 mb-10">（基于1987年出生，累计缴费20年的推演）</p>
+
+        <!-- 2. 核心前提条件 -->
+        <div class="bg-yellow-50 border-l-4 border-yellow-400 p-6 rounded-lg mb-10">
+            <h2 class="text-2xl font-bold text-yellow-800 mb-4">一、 核心前提条件（估算基石）</h2>
+            <p class="text-gray-700 mb-4">本报告的所有计算均基于以下<strong>关键假设</strong>。任何假设的变动都将导致结果发生巨大差异。</p>
+            <ul class="list-disc list-inside space-y-2 text-gray-700">
+                <li><strong>个人情况：</strong> 1987年出生，2052年（65岁）退休。</li>
+                <li><strong>缴费方案：</strong> “理想状态” - 总共只缴费<strong>20年</strong>（已缴6年 + 未来14年）。</li>
+                <li><strong>缴费档位：</strong> 始终按北京市<strong>最低缴费基数</strong>（即社平工资的60%）缴纳，缴费指数恒定为 <strong>0.6</strong>。</li>
+                <li><strong>基准数据：</strong>
+                    <ul>
+                        <li>2024年北京社平工资 (SAW)：<strong>11,937 元/月</strong></li>
+                        <li>2025年北京最低缴费基数：<strong>7,162 元/月</strong> (基于 11937 * 60%)</li>
+                        <li>2025年五险总月缴费 (您提供)：<strong>2,652.92 元</strong> (此数据用于估算成本)</li>
+                    </ul>
+                </li>
+                <li><strong>退休参数：</strong> 65岁退休，养老金计发月数为 <strong>101</strong> 个月。</li>
+                <li><strong>核心推演假设：</strong> 假设未来北京市社会平均工资（及缴费基数）<strong>每年增长 5%</strong>。这是一个长期宏观经济的合理估算值。</li>
+            </ul>
+        </div>
+
+        <!-- 3. 估算一：未来14年总缴费成本 -->
+        <h2 class="text-2xl font-bold text-blue-800 mb-4">二、 估算一：未来14年总缴费成本</h2>
+        <p class="text-gray-700 mb-4">此部分计算您从2026年到2039年（共14年）需要缴纳的五险总费用（含个人与企业部分）。</p>
+        <div class="bg-gray-50 p-6 rounded-lg shadow-sm border border-gray-200 mb-6">
+            <h3 class="text-lg font-semibold mb-2">计算逻辑：增长型年金求和</h3>
+            <p class="text-sm text-gray-600">这是一个等比数列求和问题。基准年（2025年）总缴费为 <strong>31,835.04元</strong>（2652.92 * 12），此后每年增长 5%。</p>
+            <p class="text-sm font-mono bg-gray-200 p-3 rounded my-3 overflow-x-auto">
+                公式: S = a₁ * [(rⁿ - 1) / (r - 1)] <br>
+                其中 a₁ (首项, 2026年) = 31,835.04 * 1.05 = 33,426.79 元<br>
+                r (增长率) = 1.05<br>
+                n (年数) = 14
+            </p>
+            <p class="text-sm text-gray-600"><strong>计算过程：</strong></p>
+            <p class="text-sm font-mono bg-gray-200 p-3 rounded my-3 overflow-x-auto">
+                S₁₄ = 33,426.79 * [(1.05¹⁴ - 1) / (1.05 - 1)]<br>
+                S₁₄ = 33,426.79 * [ (1.9799 - 1) / 0.05 ]<br>
+                S₁₄ = 33,426.79 * 19.5986<br>
+                S₁₄ = 655,116.8 元
+            </p>
+        </div>
+        <div class="bg-blue-100 border-l-4 border-blue-500 p-6 rounded-lg mb-10">
+            <h3 class="text-xl font-bold text-blue-900">成本估算结果：约 65.5 万元</h3>
+            <p class="text-blue-800 mt-2">在 5% 的增长假设下，未来14年您（或包含您的雇主）总共需要投入约 <strong>65.5 万元</strong> 用于缴纳<strong>五险</strong>。<strong>注意：</strong> 这是五险总和，并非全部进入养老金个人账户。</p>
+        </div>
+
+        <!-- 4. 估算二：退休后能拿多少？ -->
+        <h2 class="text-2xl font-bold text-blue-800 mb-4">三、 估算二：65岁退休时能拿多少养老金？</h2>
+        <p class="text-gray-700 mb-4">这是最核心的推算。我们将使用两种方法为您展示结果：</p>
+        
+        <!-- 4.1 静态估算 -->
+        <div class="border-2 border-dashed border-gray-300 p-6 rounded-lg mb-10">
+            <h3 class="text-xl font-semibold text-gray-800 mb-4">3.1 静态估算（按今天的购买力）</h3>
+            <p class="text-gray-600 mb-4">该方法假设您今天就退休了（且缴满了20年），用来衡量这份养老金在<strong>2025年的实际价值</strong>。</p>
+            
+            <div class="space-y-4">
+                <!-- 基础养老金 -->
+                <div class="bg-gray-50 p-4 rounded-lg shadow-sm">
+                    <h4 class="font-bold text-gray-700">A. 基础养老金 (统筹部分)</h4>
+                    <p class="text-sm font-mono bg-gray-200 p-2 rounded my-2">
+                        公式: (SAW + SAW * 指数) / 2 * 年限 * 1%<br>
+                        计算: (11,937 + 11,937 * 0.6) / 2 * 20 * 1%<br>
+                        计算: (11,937 + 7,162) / 2 * 0.2<br>
+                        计算: 9,549.5 * 0.2
+                    </p>
+                    <p class="text-lg font-bold text-right text-indigo-700">≈ 1,909.9 元/月</p>
+                </div>
+                <!-- 个人账户养老金 -->
+                <div class="bg-gray-50 p-4 rounded-lg shadow-sm">
+                    <h4 class="font-bold text-gray-700">B. 个人账户养老金</h4>
+                    <p class="text-sm font-mono bg-gray-200 p-2 rounded my-2">
+                        公式: (缴费基数 * 8% * 12 * 年限) / 计发月数<br>
+                        计算: (7,162 * 0.08 * 12 * 20) / 101<br>
+                        计算: 137,510.4 / 101
+                    </p>
+                    <p class="text-lg font-bold text-right text-indigo-700">≈ 1,361.5 元/月</p>
+                </div>
+                <!-- 静态总计 -->
+                <div class="bg-indigo-100 border border-indigo-300 p-4 rounded-lg text-center">
+                    <h4 class="text-lg font-bold text-indigo-900">静态估算总额 (A + B)</h4>
+                    <p class="text-3xl font-bold text-indigo-700 my-2">≈ 3,271.4 元/月</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4.2 动态估算 -->
+        <div class="border-2 border-blue-300 p-6 rounded-lg mb-10 bg-blue-50">
+            <h3 class="text-xl font-semibold text-blue-900 mb-4">3.2 动态估算（2052年的实际金额）</h3>
+            <p class="text-blue-800 mb-4">这是对27年后（2052年）您银行卡上<strong>实际收到金额</strong>的推测，高度依赖 5% 的增长假设。</p>
+            
+            <div class="space-y-4">
+                <!-- 步骤一 -->
+                <div class="bg-white p-4 rounded-lg shadow-sm">
+                    <h4 class="font-bold text-gray-700">步骤一：推算2051年的社会平均工资(SAW)</h4>
+                    <p class="text-sm text-gray-600">这是计算您基础养老金的核心基数。</p>
+                    <p class="text-sm font-mono bg-gray-200 p-2 rounded my-2">
+                        公式: 2024年SAW * (1 + 增长率)ⁿ<br>
+                        计算: 11,937 * (1.05)⁽²⁰⁵¹⁻²⁰²⁴⁾<br>
+                        计算: 11,937 * (1.05)²⁷<br>
+                        计算: 11,937 * 3.731
+                    </p>
+                    <p class="text-lg font-bold text-right text-blue-700">2051年SAW ≈ 44,530 元/月</p>
+                </div>
+                <!-- 步骤二 -->
+                <div class="bg-white p-4 rounded-lg shadow-sm">
+                    <h4 class="font-bold text-gray-700">步骤二：计算A. 基础养老金 (未来值)</h4>
+                    <p class="text-sm font-mono bg-gray-200 p-2 rounded my-2">
+                        公式: (2051年SAW + 2051年SAW * 0.6) / 2 * 20 * 1%<br>
+                        计算: (44,530 + 44,530 * 0.6) / 2 * 0.2<br>
+                        计算: (44,530 + 26,718) / 2 * 0.2<br>
+                        计算: 35,624 * 0.2
+                    </p>
+                    <p class="text-lg font-bold text-right text-blue-700">≈ 7,124.8 元/月</p>
+                </div>
+                <!-- 步骤三 -->
+                <div class="bg-white p-4 rounded-lg shadow-sm">
+                    <h4 class="font-bold text-gray-700">步骤三：估算B. 个人账户养老金 (未来值)</h4>
+                    <p class="text-sm text-gray-600">为简化计算，我们使用静态估算中的比例 (B/A ≈ 71.3%) 来推算。</p>
+                    <p class="text-sm font-mono bg-gray-200 p-2 rounded my-2">
+                        计算: 7,124.8元 (未来基础) * 71.3%
+                    </p>
+                    <p class="text-lg font-bold text-right text-blue-700">≈ 5,079.0 元/月</p>
+                </div>
+                <!-- 动态总计 -->
+                <div class="bg-blue-200 border border-blue-400 p-4 rounded-lg text-center">
+                    <h4 class="text-lg font-bold text-blue-900">动态估算总额 (A + B)</h4>
+                    <p class="text-3xl font-bold text-blue-800 my-2">≈ 12,203.8 元/月</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 5. 最终结论与解读 -->
+        <h2 class="text-2xl font-bold text-red-800 mb-4">四、 最终结论与解读</h2>
+        <p class="text-gray-700 mb-6">综合以上两种估算，我们得出以下结论：</p>
+        
+        <div class="overflow-x-auto shadow-md rounded-lg mb-8">
+            <table class="w-full text-left text-gray-700">
+                <thead class="text-xs text-gray-700 uppercase bg-gray-200">
+                    <tr>
+                        <th scope="col" class="px-6 py-3">估算类型</th>
+                        <th scope="col" class="px-6 py-3">养老金金额 (月)</th>
+                        <th scope="col" class="px-6 py-3">参考社平工资 (月)</th>
+                        <th scope="col" class="px-6 py-3">养老金替代率</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="bg-white border-b">
+                        <td class="px-6 py-4 font-medium">静态估算 (2025年水平)</td>
+                        <td class="px-6 py-4 text-lg font-bold">~ 3,271 元</td>
+                        <td class="px-6 py-4">~ 11,937 元</td>
+                        <td class="px-6 py-4 text-lg font-bold text-red-700">27.4%</td>
+                    </tr>
+                    <tr class="bg-gray-50 border-b">
+                        <td class="px-6 py-4 font-medium">动态估算 (2052年水平)</td>
+                        <td class="px-6 py-4 text-lg font-bold">~ 12,204 元</td>
+                        <td class="px-6 py-4">~ 44,530 元</td>
+                        <td class="px-6 py-4 text-lg font-bold text-red-700">27.4%</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="bg-red-50 border-l-4 border-red-500 p-6 rounded-lg">
+            <h3 class="text-xl font-bold text-red-900 mb-3">核心解读：什么是“27.4%”？</h3>
+            <p class="text-red-800 space-y-3">
+                您未来每月领取的 <strong>12,204 元</strong> 看似很多，但届时的社会平均工资也涨到了 <strong>44,530 元</strong>。
+                <br>
+                您的养老金水平（即“替代率”）大约是社会平均工资的 <strong>27.4%</strong>。
+                <br>
+                <strong>换句话说：您在2052年领取的 12,204 元，其购买力大致相当于今天（2025年）的 3,271 元。</strong>
+                <br>
+                这个结果是您选择“最低基数”和“20年年限”方案的直接体现，它低于国际劳工组织建议的55%养老金替代率警戒线，仅能维持基本生活。
+            </p>
+        </div>
+        
+        <p class="text-center text-xs text-gray-400 mt-10">
+            免责声明：本报告基于大量假设和数据推演，仅供个人参考，不构成任何财务建议。实际养老金以退休时社保机构核算为准。
+        </p>
+    </div>
+
+</body>
+</html>
