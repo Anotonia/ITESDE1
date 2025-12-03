@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube CPM 2025 数据洞察报告</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background-color: #0f172a; /* Slate 900 Background */
+            color: #e2e8f0; /* Slate 200 Text */
+        }
+        
+        /* 3D Flip Card Styles */
+        .flip-card {
+            background-color: transparent;
+            perspective: 1000px;
+            cursor: pointer;
+            height: 320px; /* Increased height for details */
+        }
+
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+            border-radius: 1rem;
+        }
+
+        .flip-card.flipped .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flip-card-front, .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: 1rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 1.5rem;
+            border: 1px solid #334155; /* Slate 700 Border */
+        }
+
+        .flip-card-front {
+            background: linear-gradient(145deg, #1e293b, #0f172a); /* Dark Gradient */
+            color: white;
+        }
+
+        .flip-card-back {
+            background-color: #172554; /* Blue 950 */
+            color: #bfdbfe; /* Blue 200 */
+            transform: rotateY(180deg);
+            border: 1px solid #1e40af; /* Blue 800 */
+            align-items: stretch; /* Stretch content for lists */
+            text-align: left;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 5px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+
+        .heavy-card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+        }
+        
+        .gradient-header {
+            /* Deep Blue/Black Gradient */
+            background: linear-gradient(180deg, #020617 0%, #172554 100%);
+        }
+
+        /* Neon Glow Effects for highlights */
+        .neon-text-blue {
+            text-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+        }
+        
+        .card-icon-bg {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* Timeline / Progress bar styles for Cost Effectiveness */
+        .time-block {
+            transition: all 0.3s ease;
+        }
+        .time-block:hover {
+            transform: scale(1.02);
+            filter: brightness(1.1);
+        }
+    </style>
+</head>
+<body class="bg-slate-950">
+
+    <!-- Navbar -->
+    <nav class="bg-slate-900/90 backdrop-blur-md shadow-2xl sticky top-0 z-50 border-b border-blue-900">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20 items-center">
+                <div class="flex items-center">
+                    <div class="bg-blue-900/30 rounded-full p-2 mr-3 border border-blue-800">
+                        <i class="fa-brands fa-youtube text-blue-500 text-3xl"></i>
+                    </div>
+                    <span class="font-black text-2xl tracking-wide text-white">YouTube CPM <span class="text-blue-500">2025</span></span>
+                </div>
+                <div class="text-sm text-slate-400 hidden md:block font-medium bg-slate-800/50 px-4 py-1 rounded-full border border-slate-700">
+                    <i class="fas fa-shield-alt mr-2 text-blue-400"></i>企业级数据分析视图
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header / Hero -->
+    <div class="gradient-header text-white pb-32 pt-16 border-b border-blue-900/50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h1 class="text-5xl md:text-6xl font-black mb-6 drop-shadow-2xl tracking-tight">2025 全球变现深度报告</h1>
+            <p class="text-xl md:text-2xl text-slate-300 max-w-4xl mx-auto font-medium leading-relaxed">
+                掌握 CPM 核心数据 · 洞悉算法竞价机制 · <span class="text-blue-400 font-bold neon-text-blue">规避二创合规风险</span>
+            </p>
+            <div class="mt-10 flex justify-center gap-4">
+                <div class="inline-block bg-slate-800/60 px-6 py-2 rounded-full border border-slate-600 backdrop-blur-sm shadow-lg">
+                    <i class="fas fa-database mr-2 text-blue-400"></i> <span class="text-sm font-bold text-slate-200">市场估算数据</span>
+                </div>
+                <div class="inline-block bg-slate-800/60 px-6 py-2 rounded-full border border-slate-600 backdrop-blur-sm shadow-lg">
+                    <i class="fas fa-check-circle mr-2 text-green-400"></i> <span class="text-sm font-bold text-slate-200">YPP 合规指南</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-24 pb-20">
+
+        <!-- Section 1: Data Visualization (Charts) -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 mb-16">
+            <!-- Geographic CPM Chart -->
+            <div class="heavy-card rounded-2xl p-8 border-t-4 border-t-blue-600">
+                <div class="flex justify-between items-center mb-8">
+                    <h2 class="text-2xl font-bold text-white"><i class="fas fa-globe-americas text-blue-500 mr-3"></i>国家/地区 CPM 范围</h2>
+                </div>
+                <div class="relative h-96">
+                    <canvas id="geoChart"></canvas>
+                </div>
+                <p class="text-sm font-medium text-slate-400 mt-6 text-center bg-slate-800/50 p-3 rounded-lg border border-slate-700">
+                    <span class="font-bold text-blue-400">Tier 1 市场统治：</span>美国、澳洲领跑，发达国家预算充足。
+                </p>
+            </div>
+
+            <!-- Niche CPM Chart -->
+            <div class="heavy-card rounded-2xl p-8 border-t-4 border-t-indigo-600">
+                <div class="flex justify-between items-center mb-8">
+                    <h2 class="text-2xl font-bold text-white"><i class="fas fa-layer-group text-indigo-500 mr-3"></i>内容垂类 CPM 范围</h2>
+                </div>
+                <div class="relative h-96">
+                    <canvas id="nicheChart"></canvas>
+                </div>
+                <p class="text-sm font-medium text-slate-400 mt-6 text-center bg-slate-800/50 p-3 rounded-lg border border-slate-700">
+                    <span class="font-bold text-indigo-400">价值洼地：</span>金融类内容一骑绝尘，Shorts 处于积累期。
+                </p>
+            </div>
+        </div>
+
+        <!-- Section 2: Core Metrics & Formulas -->
+        <div class="mb-16">
+            <h2 class="text-3xl font-black text-white mb-8 pl-4 border-l-8 border-blue-700 tracking-wide">核心计算机制</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- CPM Card -->
+                <div class="heavy-card rounded-2xl p-8 hover:border-blue-500 transition-colors duration-300">
+                    <div class="flex items-center mb-6">
+                        <div class="w-14 h-14 rounded-xl card-icon-bg flex items-center justify-center mr-4">
+                            <i class="fas fa-hand-holding-dollar text-2xl text-blue-400"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-white">CPM (Cost Per Mille)</h3>
+                            <span class="text-sm font-bold text-blue-500 uppercase tracking-wider">广告商视角</span>
+                        </div>
+                    </div>
+                    <p class="text-lg text-slate-400 mb-6 font-medium leading-relaxed">
+                        广告商为每 1,000 次广告展示所支付的费用。这代表了该流量在市场上的<span class="text-white font-bold border-b border-blue-500">购买价格</span>。
+                    </p>
+                    <div class="bg-slate-950 text-blue-200 p-4 rounded-xl text-center font-mono text-base border border-slate-800">
+                        CPM = (广告总成本 / 展示次数) × 1000
+                    </div>
+                </div>
+                <!-- RPM Card -->
+                <div class="heavy-card rounded-2xl p-8 hover:border-green-500 transition-colors duration-300">
+                    <div class="flex items-center mb-6">
+                        <div class="w-14 h-14 rounded-xl card-icon-bg flex items-center justify-center mr-4">
+                            <i class="fas fa-wallet text-2xl text-green-400"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-white">RPM (Revenue Per Mille)</h3>
+                            <span class="text-sm font-bold text-green-500 uppercase tracking-wider">创作者视角</span>
+                        </div>
+                    </div>
+                    <p class="text-lg text-slate-400 mb-6 font-medium leading-relaxed">
+                        你实际每千次播放获得的收入（已扣除平台抽成）。这是你真正<span class="text-white font-bold border-b border-green-500">装进口袋的钱</span>。
+                    </p>
+                    <div class="bg-slate-950 text-green-200 p-4 rounded-xl text-center font-mono text-base border border-slate-800">
+                        RPM = (预估总收入 / 视频总播放量) × 1000
+                    </div>
+                </div>
+            </div>
+            
+             <!-- Auction Mechanism -->
+             <div class="mt-8 heavy-card rounded-2xl p-8 relative overflow-hidden bg-slate-900">
+                <div class="absolute top-0 right-0 w-64 h-64 bg-blue-600 opacity-5 rounded-full -mr-32 -mt-32"></div>
+                <h3 class="text-2xl font-bold mb-8 border-b border-slate-700 pb-4 text-white">广告竞价逻辑 (RTB 实时竞价)</h3>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 text-center">
+                    <div class="bg-slate-950 p-6 rounded-xl border border-slate-800">
+                        <div class="text-4xl font-black text-slate-700 mb-2">01</div>
+                        <h4 class="text-lg font-bold text-blue-400 mb-2">触发竞价</h4>
+                        <p class="text-sm text-slate-500">系统识别可用广告位</p>
+                    </div>
+                    <div class="bg-slate-950 p-6 rounded-xl border border-slate-800">
+                        <div class="text-4xl font-black text-slate-700 mb-2">02</div>
+                        <h4 class="text-lg font-bold text-blue-400 mb-2">筛选受众</h4>
+                        <p class="text-sm text-slate-500">匹配画像与元数据</p>
+                    </div>
+                    <div class="bg-slate-950 p-6 rounded-xl border border-blue-900/50 relative shadow-[0_0_15px_rgba(59,130,246,0.1)]">
+                        <div class="text-4xl font-black text-yellow-600/30 mb-2">03</div>
+                        <h4 class="text-xl font-bold text-yellow-500 mb-2">计算评级</h4>
+                        <p class="text-sm text-slate-300 font-bold">出价 × 质量得分</p>
+                    </div>
+                    <div class="bg-slate-950 p-6 rounded-xl border border-slate-800">
+                        <div class="text-4xl font-black text-green-800/30 mb-2">04</div>
+                        <h4 class="text-xl font-bold text-green-500 mb-2">赢家支付</h4>
+                        <p class="text-sm text-slate-500">次高价 + $0.01</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 3: Factors Grid (Interactive Flip Cards) -->
+        <div class="mb-16">
+            <h2 class="text-3xl font-black text-white mb-2 pl-4 border-l-8 border-blue-700">六大关键影响因素</h2>
+            <p class="text-lg text-slate-400 mb-8 pl-6"><i class="fas fa-hand-pointer mr-2 animate-bounce text-blue-500"></i>点击卡片查看详细解读</p>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                <!-- Card 1 -->
+                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <i class="fas fa-users text-5xl text-blue-500 mb-4 drop-shadow-lg"></i>
+                            <h4 class="text-2xl font-black text-slate-200">人口统计</h4>
+                            <p class="text-slate-500 font-medium mt-2">地理位置 & 购买力</p>
+                            <span class="mt-auto text-sm text-blue-500 font-bold uppercase tracking-widest border-b border-blue-900 pb-1">点击翻转</span>
+                        </div>
+                        <div class="flip-card-back">
+                            <h4 class="text-xl font-bold text-blue-400 mb-4 border-b border-blue-800 pb-2">地理位置决定下限</h4>
+                            <p class="text-base leading-relaxed">发达国家（Tier 1）用户消费能力强，点击价值远高于发展中国家。美国观众 CPM 通常是印度的 20 倍以上。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <i class="fas fa-file-video text-5xl text-indigo-500 mb-4 drop-shadow-lg"></i>
+                            <h4 class="text-2xl font-black text-slate-200">内容垂类</h4>
+                            <p class="text-slate-500 font-medium mt-2">离“钱”越近越贵</p>
+                            <span class="mt-auto text-sm text-indigo-500 font-bold uppercase tracking-widest border-b border-indigo-900 pb-1">点击翻转</span>
+                        </div>
+                        <div class="flip-card-back">
+                            <h4 class="text-xl font-bold text-indigo-400 mb-4 border-b border-indigo-800 pb-2">行业价值溢价</h4>
+                            <p class="text-base leading-relaxed">金融、房产、科技类广告商预算极高。娱乐、搞笑类虽然流量大，但转化率低，单价往往垫底。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <i class="fas fa-stopwatch text-5xl text-cyan-500 mb-4 drop-shadow-lg"></i>
+                            <h4 class="text-2xl font-black text-slate-200">观看时长</h4>
+                            <p class="text-slate-500 font-medium mt-2">广告位库存基础</p>
+                            <span class="mt-auto text-sm text-cyan-500 font-bold uppercase tracking-widest border-b border-cyan-900 pb-1">点击翻转</span>
+                        </div>
+                        <div class="flip-card-back">
+                            <h4 class="text-xl font-bold text-cyan-400 mb-4 border-b border-cyan-800 pb-2">粘性即收益</h4>
+                            <p class="text-base leading-relaxed">高完播率意味着高权重。且长视频（>8分钟）能插入中插广告，直接倍增单次播放产生的收入。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <i class="fas fa-calendar-alt text-5xl text-emerald-500 mb-4 drop-shadow-lg"></i>
+                            <h4 class="text-2xl font-black text-slate-200">季节性</h4>
+                            <p class="text-slate-500 font-medium mt-2">Q4 黄金季度</p>
+                            <span class="mt-auto text-sm text-emerald-500 font-bold uppercase tracking-widest border-b border-emerald-900 pb-1">点击翻转</span>
+                        </div>
+                        <div class="flip-card-back">
+                            <h4 class="text-xl font-bold text-emerald-400 mb-4 border-b border-emerald-800 pb-2">年底预算清空</h4>
+                            <p class="text-base leading-relaxed">Q4（10-12月）因黑五、圣诞，广告商竞价最疯狂。Q1（1月）预算重置，通常是全年收入最低谷。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 5 -->
+                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <i class="fas fa-tv text-5xl text-violet-500 mb-4 drop-shadow-lg"></i>
+                            <h4 class="text-2xl font-black text-slate-200">设备类型</h4>
+                            <p class="text-slate-500 font-medium mt-2">大屏 > 移动端</p>
+                            <span class="mt-auto text-sm text-violet-500 font-bold uppercase tracking-widest border-b border-violet-900 pb-1">点击翻转</span>
+                        </div>
+                        <div class="flip-card-back">
+                            <h4 class="text-xl font-bold text-violet-400 mb-4 border-b border-violet-800 pb-2">沉浸式体验</h4>
+                            <p class="text-base leading-relaxed">智能电视(CTV)和桌面端屏幕大，广告展示完整，误触率低，且用户通常处于放松状态，转化效果更好。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 6 -->
+                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <i class="fas fa-bullhorn text-5xl text-rose-500 mb-4 drop-shadow-lg"></i>
+                            <h4 class="text-2xl font-black text-slate-200">市场需求</h4>
+                            <p class="text-slate-500 font-medium mt-2">特定事件溢价</p>
+                            <span class="mt-auto text-sm text-rose-500 font-bold uppercase tracking-widest border-b border-rose-900 pb-1">点击翻转</span>
+                        </div>
+                        <div class="flip-card-back">
+                            <h4 class="text-xl font-bold text-rose-400 mb-4 border-b border-rose-800 pb-2">供需关系波动</h4>
+                            <p class="text-base leading-relaxed">iPhone 发布会、大选、超级碗期间，相关关键词广告位供不应求，导致特定垂类 CPM 短期暴涨。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 4: Optimization Strategies -->
+        <div class="mb-16">
+            <h2 class="text-3xl font-black text-white mb-2 pl-4 border-l-8 border-blue-700">收入倍增策略</h2>
+            <p class="text-lg text-slate-400 mb-8 pl-6"><i class="fas fa-lightbulb mr-2 text-yellow-500"></i>点击卡片获取行动指南</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Strategy 1 -->
+                <div class="flip-card" style="height: 320px;" onclick="this.classList.toggle('flipped')">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front border-l-8 border-l-blue-600">
+                            <div class="w-16 h-16 bg-blue-900/40 border border-blue-700 rounded-full flex items-center justify-center mb-6">
+                                <i class="fas fa-crosshairs text-3xl text-blue-500"></i>
+                            </div>
+                            <h3 class="text-2xl font-black text-white mb-2">精准定位受众 (Geo)</h3>
+                            <p class="text-lg text-slate-400">瞄准美/英/德等 Tier 1 市场</p>
+                            <span class="mt-auto text-sm text-slate-500 uppercase tracking-widest"><i class="fas fa-sync mr-2"></i>查看实操</span>
+                        </div>
+                        <div class="flip-card-back">
+                             <div class="h-full flex flex-col justify-center px-4">
+                                <h4 class="text-xl font-bold text-blue-400 mb-4 flex items-center"><i class="fas fa-bolt mr-2"></i>原理解析</h4>
+                                <p class="text-base mb-6 text-slate-300">只要内容能被高价值区观众理解，算法就会推送。无需肉身在国外。</p>
+                                <div class="bg-slate-900 p-4 rounded-lg border-l-4 border-blue-500">
+                                    <h5 class="font-bold text-white mb-1">行动指南：</h5>
+                                    <p class="text-sm text-slate-400">制作无语言障碍内容 (ASMR/DIY)，或投入预算制作高质量英语外挂字幕 (CC) + 英语标题。</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Strategy 2 -->
+                <div class="flip-card" style="height: 320px;" onclick="this.classList.toggle('flipped')">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front border-l-8 border-l-indigo-600">
+                            <div class="w-16 h-16 bg-indigo-900/40 border border-indigo-700 rounded-full flex items-center justify-center mb-6">
+                                <i class="fas fa-seedling text-3xl text-indigo-500"></i>
+                            </div>
+                            <h3 class="text-2xl font-black text-white mb-2">深耕高潜力垂类</h3>
+                            <p class="text-lg text-slate-400">向金融、科技、商业话题靠拢</p>
+                            <span class="mt-auto text-sm text-slate-500 uppercase tracking-widest"><i class="fas fa-sync mr-2"></i>查看实操</span>
+                        </div>
+                        <div class="flip-card-back">
+                             <div class="h-full flex flex-col justify-center px-4">
+                                <h4 class="text-xl font-bold text-indigo-400 mb-4 flex items-center"><i class="fas fa-bolt mr-2"></i>原理解析</h4>
+                                <p class="text-base mb-6 text-slate-300">广告商通过关键词投放。元数据中包含“高价词”，就能吸引高价广告。</p>
+                                <div class="bg-slate-900 p-4 rounded-lg border-l-4 border-indigo-500">
+                                    <h5 class="font-bold text-white mb-1">行动指南：</h5>
+                                    <p class="text-sm text-slate-400">跨界融合：生活博主聊“极简省钱法”(金融)，游戏博主聊“电竞房搭建”(硬件)。</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Strategy 3 -->
+                <div class="flip-card" style="height: 320px;" onclick="this.classList.toggle('flipped')">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front border-l-8 border-l-emerald-600">
+                            <div class="w-16 h-16 bg-emerald-900/40 border border-emerald-700 rounded-full flex items-center justify-center mb-6">
+                                <i class="fas fa-chart-line text-3xl text-emerald-500"></i>
+                            </div>
+                            <h3 class="text-2xl font-black text-white mb-2">把握 Q4 黄金季</h3>
+                            <p class="text-lg text-slate-400">利用年底广告预算溢出效应</p>
+                            <span class="mt-auto text-sm text-slate-500 uppercase tracking-widest"><i class="fas fa-sync mr-2"></i>查看实操</span>
+                        </div>
+                        <div class="flip-card-back">
+                             <div class="h-full flex flex-col justify-center px-4">
+                                <h4 class="text-xl font-bold text-emerald-400 mb-4 flex items-center"><i class="fas fa-bolt mr-2"></i>原理解析</h4>
+                                <p class="text-base mb-6 text-slate-300">11-12月的单次点击收入通常是1月份的 2-3 倍。这是全年收割期。</p>
+                                <div class="bg-slate-900 p-4 rounded-lg border-l-4 border-emerald-500">
+                                    <h5 class="font-bold text-white mb-1">行动指南：</h5>
+                                    <p class="text-sm text-slate-400">制定日历：1-9月养号积累，10月下旬开始密集发布最重磅、最易火的大片。</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Strategy 4 -->
+                <div class="flip-card" style="height: 320px;" onclick="this.classList.toggle('flipped')">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front border-l-8 border-l-violet-600">
+                            <div class="w-16 h-16 bg-violet-900/40 border border-violet-700 rounded-full flex items-center justify-center mb-6">
+                                <i class="fas fa-clock text-3xl text-violet-500"></i>
+                            </div>
+                            <h3 class="text-2xl font-black text-white mb-2">黄金 8 分钟</h3>
+                            <p class="text-lg text-slate-400">长视频广告位库存最大化</p>
+                            <span class="mt-auto text-sm text-slate-500 uppercase tracking-widest"><i class="fas fa-sync mr-2"></i>查看实操</span>
+                        </div>
+                        <div class="flip-card-back">
+                            <div class="h-full flex flex-col justify-center px-4">
+                                <h4 class="text-xl font-bold text-violet-400 mb-4 flex items-center"><i class="fas fa-bolt mr-2"></i>原理解析</h4>
+                                <p class="text-base mb-6 text-slate-300">只有 >8:01 的视频才能插中插广告。中插展示率远高于片头。</p>
+                                <div class="bg-slate-900 p-4 rounded-lg border-l-4 border-violet-500">
+                                    <h5 class="font-bold text-white mb-1">行动指南：</h5>
+                                    <p class="text-sm text-slate-400">手动插点！在剧情转折、悬念揭晓前插入广告，此时观众跳出率最低。</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- NEW SECTION: Cost Effectiveness Strategy -->
+        <div class="mb-16">
+            <h2 class="text-3xl font-black text-white mb-8 pl-4 border-l-8 border-cyan-600 flex items-center">
+                视频性价比与时长策略
+                <span class="ml-4 text-xs font-normal bg-cyan-900/50 text-cyan-400 px-3 py-1 rounded border border-cyan-800">收益倍增器</span>
+            </h2>
+            
+            <div class="heavy-card rounded-2xl p-8 bg-slate-900 overflow-hidden">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 text-center">
+                    <div class="time-block p-6 rounded-xl bg-slate-800 border border-slate-700 opacity-60">
+                        <div class="text-slate-500 text-sm font-bold mb-2">&lt; 8 分钟</div>
+                        <h4 class="text-xl font-bold text-white mb-1">低收益区</h4>
+                        <p class="text-xs text-slate-400">仅片头/片尾广告</p>
+                        <div class="mt-4 w-full bg-slate-700 h-2 rounded-full overflow-hidden">
+                            <div class="bg-slate-500 h-full w-1/3"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="time-block p-6 rounded-xl bg-gradient-to-br from-cyan-900 to-blue-900 border-2 border-cyan-500 shadow-[0_0_20px_rgba(34,211,238,0.2)] transform scale-105">
+                        <div class="text-cyan-300 text-sm font-bold mb-2">8 - 12 分钟</div>
+                        <h4 class="text-2xl font-black text-white mb-1"><i class="fas fa-crown text-yellow-400 mr-2"></i>黄金甜点区</h4>
+                        <p class="text-xs text-cyan-200">中插广告 + 高完播率</p>
+                        <div class="mt-4 w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                            <div class="bg-cyan-400 h-full w-3/4"></div>
+                        </div>
+                        <span class="absolute top-0 right-0 bg-yellow-500 text-black text-xs font-bold px-2 py-1 rounded-bl-lg">推荐</span>
+                    </div>
+
+                    <div class="time-block p-6 rounded-xl bg-slate-800 border border-slate-700">
+                        <div class="text-slate-400 text-sm font-bold mb-2">> 20 分钟</div>
+                        <h4 class="text-xl font-bold text-white mb-1">高风险区</h4>
+                        <p class="text-xs text-slate-400">制作成本高，完播率难维持</p>
+                        <div class="mt-4 w-full bg-slate-700 h-2 rounded-full overflow-hidden">
+                            <div class="bg-indigo-500 h-full w-full"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-slate-950 p-6 rounded-xl border border-slate-800 flex flex-col md:flex-row items-center justify-between">
+                    <div class="md:w-2/3 mb-4 md:mb-0">
+                        <h4 class="text-lg font-bold text-cyan-400 mb-2"><i class="fas fa-magic mr-2"></i>操作建议：手动插点 (Manual Placement)</h4>
+                        <p class="text-sm text-slate-300 leading-relaxed">
+                            不要完全依赖 YouTube 自动放置广告。建议在剪辑阶段预设<span class="text-white font-bold">“悬念点”</span>或<span class="text-white font-bold">“转场黑屏”</span>，并在后台手动在这些时间点插入广告。这能将观众流失率降至最低，同时确保广告被完整展示。
+                        </p>
+                    </div>
+                    <div class="md:w-1/3 flex justify-center">
+                        <div class="text-center px-4">
+                            <div class="text-3xl font-black text-white">2.5<span class="text-lg text-slate-500">x</span></div>
+                            <p class="text-xs text-slate-400 mt-1">中插广告平均提升收入</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- REVISED SECTION: Restrictions & Compliance (Flip Cards) -->
+        <div class="mb-16">
+            <h2 class="text-3xl font-black text-white mb-8 pl-4 border-l-8 border-amber-600 flex items-center">
+                平台风控与二创限制 
+                <span class="ml-4 text-xs font-normal bg-amber-900/50 text-amber-500 px-3 py-1 rounded border border-amber-800">高风险必读</span>
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Content ID Card -->
+                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front bg-slate-900 border border-slate-800">
+                            <div class="w-20 h-20 bg-amber-900/20 rounded-full flex items-center justify-center mb-6 border border-amber-700/50">
+                                <i class="fas fa-fingerprint text-4xl text-amber-500"></i>
+                            </div>
+                            <h3 class="text-2xl font-black text-white mb-2">Content ID 识别机制</h3>
+                            <p class="text-lg text-slate-400">自动化版权指纹比对系统</p>
+                            <span class="mt-auto text-sm text-amber-600 uppercase tracking-widest"><i class="fas fa-exclamation-triangle mr-2"></i>点击查看风险</span>
+                        </div>
+                        <div class="flip-card-back bg-slate-900 border border-amber-900">
+                            <div class="h-full flex flex-col justify-center px-6 py-4">
+                                <h4 class="text-lg font-bold text-amber-500 mb-3 border-b border-amber-800/50 pb-2">识别原理与后果</h4>
+                                <ul class="space-y-3 text-sm text-slate-300 text-left">
+                                    <li class="flex items-start">
+                                        <i class="fas fa-eye text-amber-600 mt-1 mr-2"></i>
+                                        <span><strong>视觉指纹：</strong>即使对画面进行翻转、缩放、调色或加滤镜，AI 依然能识别出原始视频素材。</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i class="fas fa-music text-amber-600 mt-1 mr-2"></i>
+                                        <span><strong>音频波形：</strong>背景音乐是重灾区。几秒钟的版权音乐片段即可触发。</span>
+                                    </li>
+                                </ul>
+                                <div class="mt-4 bg-amber-950/40 p-3 rounded border border-amber-900/50">
+                                    <p class="text-xs font-bold text-amber-400 mb-1">后果区分：</p>
+                                    <div class="grid grid-cols-2 gap-2 text-xs">
+                                        <div><span class="text-white">Claim (主张):</span> 视频收入归版权方，账号安全。</div>
+                                        <div><span class="text-red-400">Strike (警示):</span> 视频下架，3次封号。</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reused Content Policy Card -->
+                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front bg-slate-900 border border-slate-800">
+                            <div class="w-20 h-20 bg-rose-900/20 rounded-full flex items-center justify-center mb-6 border border-rose-700/50">
+                                <i class="fas fa-recycle text-4xl text-rose-500"></i>
+                            </div>
+                            <h3 class="text-2xl font-black text-white mb-2">二创/重复内容规范</h3>
+                            <p class="text-lg text-slate-400">YPP 获利资格核心红线</p>
+                            <span class="mt-auto text-sm text-rose-600 uppercase tracking-widest"><i class="fas fa-ban mr-2"></i>点击查看红线</span>
+                        </div>
+                        <div class="flip-card-back bg-slate-900 border border-rose-900">
+                            <div class="h-full flex flex-col justify-center px-6 py-4">
+                                <h4 class="text-lg font-bold text-rose-500 mb-3 border-b border-rose-800/50 pb-2">获利资格判定标准</h4>
+                                <p class="text-xs text-slate-400 mb-3">简单的剪辑搬运已被全面封杀。必须增加“重大原创价值”。</p>
+                                <div class="grid grid-cols-1 gap-3 text-sm">
+                                    <div class="bg-green-900/20 p-2 rounded border-l-4 border-green-600">
+                                        <strong class="text-green-400 block mb-1"><i class="fas fa-check mr-1"></i>允许获利 (Transformative)</strong>
+                                        <span class="text-slate-300 text-xs">露脸解说反应、重新配音的恶搞、具有教育意义的深度剪辑重构。</span>
+                                    </div>
+                                    <div class="bg-rose-900/20 p-2 rounded border-l-4 border-rose-600">
+                                        <strong class="text-rose-400 block mb-1"><i class="fas fa-times mr-1"></i>禁止获利 (Low Effort)</strong>
+                                        <span class="text-slate-300 text-xs">TikTok 短视频合集、AI 朗读维基百科/Reddit、仅添加字幕的他人视频。</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 5: Shorts vs Long form Table -->
+        <div class="heavy-card rounded-2xl overflow-hidden mb-12">
+            <div class="bg-slate-900 text-white p-6 border-b border-slate-800">
+                <h3 class="text-2xl font-bold"><i class="fas fa-balance-scale mr-3 text-slate-400"></i>优化指南：Shorts vs 长视频</h3>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-950 border-b border-slate-800">
+                            <th class="p-6 font-bold text-slate-500 uppercase tracking-wider text-sm">维度</th>
+                            <th class="p-6 font-bold text-rose-500 text-xl"><i class="fab fa-youtube mr-2"></i> Shorts</th>
+                            <th class="p-6 font-bold text-blue-500 text-xl"><i class="fas fa-video mr-2"></i> 长视频</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-base text-slate-300 font-medium">
+                        <tr class="border-b border-slate-800 hover:bg-slate-800/50 transition-colors">
+                            <td class="p-6 font-bold text-slate-200">核心目标</td>
+                            <td class="p-6">流量爆发 & 引流 (Bridge Strategy)</td>
+                            <td class="p-6">广告密度 & 受众价值</td>
+                        </tr>
+                        <tr class="border-b border-slate-800 hover:bg-slate-800/50 transition-colors">
+                            <td class="p-6 font-bold text-slate-200">完播率策略</td>
+                            <td class="p-6"><span class="bg-rose-900/50 text-rose-400 px-2 py-1 rounded text-sm font-bold border border-rose-800">>100%</span> (制作无缝循环 Loop)</td>
+                            <td class="p-6">提升会话时长 (Session Time)</td>
+                        </tr>
+                        <tr class="border-b border-slate-800 hover:bg-slate-800/50 transition-colors">
+                            <td class="p-6 font-bold text-slate-200">变现重心</td>
+                            <td class="p-6">品牌赞助 (CPM 极低)</td>
+                            <td class="p-6">AdSense 广告分成 (中插广告)</td>
+                        </tr>
+                        <tr class="hover:bg-slate-800/50 transition-colors">
+                            <td class="p-6 font-bold text-slate-200">SEO 策略</td>
+                            <td class="p-6">利用关联视频链接导流</td>
+                            <td class="p-6">搜索优化 & 常青内容 (Evergreen)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-black text-white py-12 text-center border-t border-blue-900">
+        <h2 class="text-2xl font-black mb-4 tracking-wider">YouTube CPM <span class="text-blue-600">2025</span></h2>
+        <p class="opacity-60 mb-2 font-medium">数据驱动 · 策略为王 · 规避红线</p>
+        <p class="opacity-30 text-xs mt-6">© 2025 YouTube CPM Analysis Dashboard | Based on market estimates</p>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // Chart.js Default Config - Dark Mode Adapted
+        Chart.defaults.font.family = "'Noto Sans SC', sans-serif";
+        Chart.defaults.font.weight = 'bold';
+        Chart.defaults.color = '#94a3b8'; // Slate-400
+
+        // 1. Geographic CPM Data (Range: Min - Max)
+        const geoCtx = document.getElementById('geoChart').getContext('2d');
+        const geoChart = new Chart(geoCtx, {
+            type: 'bar',
+            data: {
+                labels: ['美国', '澳洲', '瑞士', '加拿大', '英国', '德国', '意大利', '西班牙', '印度', '巴基斯坦'],
+                datasets: [{
+                    label: 'CPM 价格范围 (USD)',
+                    data: [
+                        [14.67, 32.75], // US
+                        [13.30, 36.21], // AU
+                        [12.98, 22.00], // CH
+                        [9.93, 29.15],  // CA
+                        [8.91, 22.00],  // UK
+                        [8.50, 21.00],  // DE
+                        [6.15, 16.40],  // IT
+                        [5.20, 14.50],  // ES
+                        [0.50, 1.00],   // IN
+                        [0.20, 0.42]    // PK
+                    ],
+                    backgroundColor: [
+                        '#1e40af',  // US (Blue-800)
+                        '#1d4ed8',  // AU
+                        '#d97706',  // CH (Amber-600)
+                        '#0f766e',  // CA (Teal-700)
+                        '#7e22ce', // UK (Purple-700)
+                        '#ea580c',  // DE (Orange-600)
+                        '#64748b', // IT (Slate-500)
+                        '#4338ca',  // ES (Indigo-700)
+                        '#be123c',  // IN (Rose-700)
+                        '#0ea5e9'   // PK (Sky-500)
+                    ],
+                    borderColor: '#0f172a',
+                    borderWidth: 0,
+                    borderRadius: 4,
+                    barPercentage: 0.7
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                indexAxis: 'y',
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: '#020617', // Slate-950
+                        titleColor: '#e2e8f0',
+                        bodyColor: '#e2e8f0',
+                        borderColor: '#1e40af',
+                        borderWidth: 1,
+                        titleFont: { size: 14, weight: 'bold' },
+                        bodyFont: { size: 14 },
+                        padding: 12,
+                        callbacks: {
+                            label: function(context) {
+                                const raw = context.raw;
+                                return `$${raw[0]} - $${raw[1]}`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                        title: { display: true, text: 'USD ($)', font: {size: 14, weight: 'bold'}, color: '#94a3b8' },
+                        ticks: { font: {size: 12, weight: 'bold'}, color: '#64748b' }
+                    },
+                    y: {
+                        grid: { display: false },
+                        ticks: { font: {size: 13, weight: 'bold'}, color: '#cbd5e1' }
+                    }
+                }
+            }
+        });
+
+        // 2. Niche CPM Data (Range)
+        const nicheCtx = document.getElementById('nicheChart').getContext('2d');
+        const nicheChart = new Chart(nicheCtx, {
+            type: 'bar',
+            data: {
+                labels: ['金融/商业', '教育/培训', '科技/评测', '生活方式', '游戏/娱乐', '音乐', 'Shorts'],
+                datasets: [{
+                    label: 'CPM 价格范围 (USD)',
+                    data: [
+                        [14.55, 36.36],
+                        [8.00, 9.09],
+                        [5.50, 12.00],
+                        [4.00, 6.36],
+                        [2.00, 4.55],
+                        [0.50, 1.36],
+                        [0.02, 0.15]
+                    ],
+                    backgroundColor: [
+                        '#059669', // Finance (Emerald-600)
+                        '#2563eb', // Edu
+                        '#4f46e5', // Tech
+                        '#d97706', // Lifestyle
+                        '#db2777', // Gaming
+                        '#475569', // Music
+                        '#dc2626'  // Shorts (Red-600)
+                    ],
+                    borderRadius: 4,
+                    barPercentage: 0.7
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                indexAxis: 'y',
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: '#020617',
+                        titleColor: '#e2e8f0',
+                        bodyColor: '#e2e8f0',
+                        borderColor: '#4f46e5',
+                        borderWidth: 1,
+                        titleFont: { size: 14, weight: 'bold' },
+                        bodyFont: { size: 14 },
+                        padding: 12,
+                        callbacks: {
+                            label: function(context) {
+                                const raw = context.raw;
+                                return `$${raw[0]} - $${raw[1]}`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                        title: { display: true, text: 'USD ($)', font: {size: 14, weight: 'bold'}, color: '#94a3b8' },
+                        ticks: { font: {size: 12, weight: 'bold'}, color: '#64748b' }
+                    },
+                    y: {
+                        grid: { display: false },
+                        ticks: { font: {size: 13, weight: 'bold'}, color: '#cbd5e1' }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
