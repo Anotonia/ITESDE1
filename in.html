@@ -701,43 +701,100 @@
 
     <!-- Section 6: Compliance (Dark/Red Zone) -->
     <section class="py-24 px-6 md:px-12 bg-[#0a0000] border-t border-red-900/30">
-        <div class="max-w-5xl mx-auto text-center reveal">
+        <div class="max-w-7xl mx-auto text-center reveal"> <!-- Changed max-w-5xl to max-w-7xl for 3 cards -->
             <i class="fas fa-shield-halved text-6xl text-red-600 mb-8"></i>
             <h2 class="text-4xl md:text-6xl font-bold mb-6 text-white">合规与风险</h2>
             <p class="text-xl text-gray-400 mb-16 max-w-2xl mx-auto">
-                YouTube 的 Content ID 系统极其精准。规避以下红线以保护您的获利资格。
+                YouTube 的审核系统极其严格。规避以下红线以保护您的获利资格。
             </p>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-10 text-left">
-                <!-- Risk Card 1 -->
-                <div class="p-10 rounded-[2rem] bg-red-950/10 border border-red-900/30 hover:border-red-600/50 transition-colors">
-                    <h3 class="text-3xl font-bold text-red-500 mb-6 flex items-center gap-3">
-                        <i class="fas fa-fingerprint"></i>
-                        <span>Content ID</span>
-                    </h3>
-                    <p class="text-gray-400 mb-6 text-lg leading-relaxed">
-                        自动化的指纹识别。哪怕是几秒钟的背景音乐或翻转的画面，都会被检测到。
-                    </p>
-                    <ul class="text-base text-gray-500 space-y-3 font-medium">
-                        <li><span class="text-red-400">• 主张 (Claim):</span> 收入归版权方</li>
-                        <li><span class="text-red-400">• 警示 (Strike):</span> 视频下架，三次封号</li>
-                    </ul>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 text-left"> <!-- Changed to 3 columns -->
+                <!-- Risk Card 1: Content ID -->
+                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                    <div class="flip-card-inner">
+                        <!-- Front -->
+                        <div class="flip-card-front bg-red-950/10 border border-red-900/30 hover:border-red-600/50 transition-colors">
+                            <i class="fas fa-fingerprint text-6xl text-red-500 mb-6"></i>
+                            <h3 class="text-3xl font-bold text-red-500 mb-2">Content ID</h3>
+                            <p class="text-gray-400 text-lg">版权指纹识别</p>
+                            <span class="mt-8 text-sm text-red-400/60 uppercase tracking-widest text-center">点击查看详情</span>
+                        </div>
+                        <!-- Back -->
+                        <div class="flip-card-back bg-[#1a0505] border border-red-900/50 items-start p-8">
+                            <h4 class="text-xl font-bold text-red-500 mb-4 border-b border-red-900/50 pb-2 w-full">识别机制</h4>
+                            <p class="text-gray-400 text-sm mb-6 leading-relaxed">
+                                AI 扫描视频画面和音频。几秒钟的素材即可触发匹配，即使翻转画面也难逃检测。
+                            </p>
+                            <ul class="text-sm text-gray-400 space-y-3 w-full">
+                                <li class="flex justify-between"><span class="text-white">Claim (主张)</span> <span class="text-gray-500">收入归版权方</span></li>
+                                <li class="flex justify-between"><span class="text-red-600 font-bold">Strike (警示)</span> <span class="text-gray-500">3次封号</span></li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Risk Card 2 -->
-                <div class="p-10 rounded-[2rem] bg-red-950/10 border border-red-900/30 hover:border-red-600/50 transition-colors">
-                    <h3 class="text-3xl font-bold text-red-500 mb-6 flex items-center gap-3">
-                        <i class="fas fa-ban"></i>
-                        <span>重复内容</span>
-                    </h3>
-                    <p class="text-gray-400 mb-6 text-lg leading-relaxed">
-                        简单的搬运剪辑无法获利。必须增加“重大原创价值”。
-                    </p>
-                    <ul class="text-base text-gray-500 space-y-3 font-medium">
-                        <li><span class="text-green-500">• 允许:</span> 露脸解说、深度重构</li>
-                        <li><span class="text-red-400">• 禁止:</span> AI朗读百科、简单合集</li>
-                    </ul>
+                <!-- Risk Card 2: Reused Content -->
+                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                    <div class="flip-card-inner">
+                        <!-- Front -->
+                        <div class="flip-card-front bg-red-950/10 border border-red-900/30 hover:border-red-600/50 transition-colors">
+                            <i class="fas fa-ban text-6xl text-red-500 mb-6"></i>
+                            <h3 class="text-3xl font-bold text-red-500 mb-2">重复内容</h3>
+                            <p class="text-gray-400 text-lg">YPP 获利红线</p>
+                            <span class="mt-8 text-sm text-red-400/60 uppercase tracking-widest text-center">点击查看详情</span>
+                        </div>
+                        <!-- Back -->
+                        <div class="flip-card-back bg-[#1a0505] border border-red-900/50 items-start p-8">
+                            <h4 class="text-xl font-bold text-red-500 mb-4 border-b border-red-900/50 pb-2 w-full">判定标准</h4>
+                            <p class="text-gray-400 text-sm mb-6 leading-relaxed">
+                                必须增加“重大原创价值”。简单的搬运、AI朗读或无解说剪辑将被剥夺获利资格。
+                            </p>
+                            <div class="grid grid-cols-1 gap-4 w-full">
+                                <div class="bg-red-900/20 p-2 rounded-lg border-l-4 border-red-600">
+                                    <strong class="text-red-400 block text-xs mb-1">❌ 禁止</strong>
+                                    <span class="text-gray-500 text-xs">AI 朗读百科、短视频合集。</span>
+                                </div>
+                                <div class="bg-green-900/20 p-2 rounded-lg border-l-4 border-green-600">
+                                    <strong class="text-green-400 block text-xs mb-1">✅ 允许</strong>
+                                    <span class="text-gray-500 text-xs">露脸解说、深度重构。</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+
+                <!-- Risk Card 3: Yellow Icon (New) -->
+                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                    <div class="flip-card-inner">
+                        <!-- Front -->
+                        <div class="flip-card-front bg-yellow-900/10 border border-yellow-700/30 hover:border-yellow-500/50 transition-colors">
+                            <i class="fas fa-triangle-exclamation text-6xl text-yellow-500 mb-6"></i>
+                            <h3 class="text-3xl font-bold text-yellow-500 mb-2">黄标风险</h3>
+                            <p class="text-gray-400 text-lg">广告投放受限</p>
+                            <span class="mt-8 text-sm text-yellow-500/60 uppercase tracking-widest text-center">点击查看详情</span>
+                        </div>
+                        <!-- Back -->
+                        <div class="flip-card-back bg-[#1a1500] border border-yellow-700/50 items-start p-8">
+                            <h4 class="text-xl font-bold text-yellow-500 mb-4 border-b border-yellow-700/50 pb-2 w-full">触发机制</h4>
+                            <p class="text-gray-400 text-sm mb-6 leading-relaxed">
+                                视频内容被判定为“不适合广告商”。常见于敏感话题、粗俗语言（开头30秒）、暴力或成人话题。
+                            </p>
+                            <div class="w-full">
+                                <div class="flex justify-between text-xs uppercase tracking-widest text-gray-500 mb-2">
+                                    <span>收入影响</span>
+                                    <span class="text-red-500 font-bold">-90%</span>
+                                </div>
+                                <div class="w-full bg-gray-800 h-2 rounded-full overflow-hidden">
+                                    <div class="bg-yellow-500 h-full w-[10%]"></div>
+                                </div>
+                                <p class="text-xs text-gray-500 mt-2">
+                                    仅少量或无广告展示。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </section>
