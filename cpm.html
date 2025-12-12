@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube CPM 2025 | The Creator Edition</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Space Grotesk', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            black: '#030303',
+                            card: '#0a0a0a',
+                            border: '#1f1f1f',
+                            accent: '#ccff00', /* Shopify Style Acid Green */
+                            purple: '#d8b4fe',
+                            blue: '#22d3ee'
+                        }
+                    },
+                    animation: {
+                        'spin-slow': 'spin 20s linear infinite',
+                        'marquee': 'marquee 30s linear infinite',
+                        'pulse-glow': 'pulse-glow 4s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        marquee: {
+                            '0%': { transform: 'translateX(0%)' },
+                            '100%': { transform: 'translateX(-100%)' },
+                        },
+                        'pulse-glow': {
+                            '0%, 100%': { opacity: 0.4 },
+                            '50%': { opacity: 0.8 },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        :root {
+            --cursor-x: 50%;
+            --cursor-y: 50%;
+        }
+
+        body {
+            background-color: #030303;
+            color: #ffffff;
+            cursor: default;
+        }
+
+        /* 噪点纹理 - 增加胶片质感 */
+        .noise-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            pointer-events: none;
+            z-index: 50;
+            opacity: 0.04;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        /* 鼠标跟随聚光灯效果 */
+        .spotlight-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 40;
+            background: radial-gradient(600px circle at var(--cursor-x) var(--cursor-y), rgba(255,255,255,0.06), transparent 40%);
+        }
+
+        /* 超大标题 */
+        .mega-title {
+            font-size: clamp(3rem, 11vw, 10rem);
+            line-height: 0.9;
+            letter-spacing: -0.04em;
+            background: linear-gradient(180deg, #fff 0%, #888 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* 玻璃拟态导航胶囊 */
+        .nav-pill {
+            background: rgba(10, 10, 10, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+
+        /* 高级 Bento 卡片 */
+        .bento-box {
+            background: #0a0a0a;
+            border: 1px solid #1f1f1f;
+            border-radius: 32px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease;
+        }
+
+        .bento-box::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: 32px;
+            padding: 1px;
+            background: linear-gradient(180deg, rgba(255,255,255,0.1), transparent);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+        }
+
+        .bento-box:hover {
+            transform: translateY(-4px) scale(1.005);
+            border-color: rgba(255,255,255,0.2);
+            z-index: 10;
+        }
+
+        /* 内部发光 */
+        .inner-glow {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(800px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255,255,255,0.04), transparent 40%);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .bento-box:hover .inner-glow { opacity: 1; }
+
+        /* 滚动显现动画 */
+        .reveal-up {
+            opacity: 0;
+            transform: translateY(60px);
+            transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal-up.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* 3D 地球模拟 (纯 CSS) */
+        .wireframe-globe {
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(90deg, transparent 0, transparent 40px, rgba(255,255,255,0.05) 40px, rgba(255,255,255,0.05) 41px),
+                        repeating-linear-gradient(0deg, transparent 0, transparent 40px, rgba(255,255,255,0.05) 40px, rgba(255,255,255,0.05) 41px);
+            border-radius: 50%;
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            mask-image: radial-gradient(circle, black 40%, transparent 70%);
+            animation: spin 60s linear infinite;
+        }
+
+        /* 翻转卡片优化 */
+        .flip-card-wrapper {
+            perspective: 1500px;
+            height: 500px;
+        }
+        .flip-card-content {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: left;
+            transition: transform 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+            transform-style: preserve-3d;
+        }
+        .flip-card-wrapper:hover .flip-card-content {
+            transform: rotateY(180deg);
+        }
+        .flip-front, .flip-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 32px;
+            background: #0a0a0a;
+            border: 1px solid #1f1f1f;
+            padding: 3rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .flip-back {
+            transform: rotateY(180deg);
+            background: #0f0f0f;
+            border-color: var(--brand-accent);
+        }
+
+        .highlight-text {
+            color: #ccff00;
+            text-shadow: 0 0 20px rgba(204, 255, 0, 0.4);
+        }
+        
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #030303; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+    </style>
+</head>
+<body onmousemove="document.documentElement.style.setProperty('--cursor-x', event.clientX + 'px'); document.documentElement.style.setProperty('--cursor-y', event.clientY + 'px')">
+
+    <div class="noise-bg"></div>
+    <div class="spotlight-overlay"></div>
+
+    <!-- Navigation -->
+    <nav class="fixed top-8 inset-x-0 z-50 flex justify-center pointer-events-none">
+        <div class="nav-pill pointer-events-auto px-6 py-3 rounded-full flex items-center gap-8 transition-transform hover:scale-105">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-full bg-brand-accent flex items-center justify-center text-black font-bold">
+                    <i class="fa-brands fa-youtube"></i>
+                </div>
+                <span class="font-display font-bold text-sm tracking-wide">EDITION <span class="text-gray-500">'25</span></span>
+            </div>
+            <div class="w-px h-4 bg-white/20 hidden md:block"></div>
+            <div class="hidden md:flex items-center gap-6 text-xs font-medium text-gray-400">
+                <a href="#market" class="hover:text-white transition-colors uppercase tracking-widest">Market</a>
+                <a href="#niche" class="hover:text-white transition-colors uppercase tracking-widest">Niche</a>
+                <a href="#strategy" class="hover:text-white transition-colors uppercase tracking-widest">Strategy</a>
+                <a href="#risk" class="hover:text-white transition-colors uppercase tracking-widest">Risk</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="relative min-h-screen flex flex-col justify-center items-center px-6 overflow-hidden">
+        <!-- Abstract Background Elements -->
+        <div class="absolute inset-0 z-0 opacity-40">
+            <div class="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-brand-accent rounded-full blur-[150px] animate-pulse-glow"></div>
+            <div class="absolute bottom-1/4 right-1/4 w-[600px] h-[600px] bg-brand-purple rounded-full blur-[180px] opacity-60"></div>
+        </div>
+
+        <div class="z-10 text-center max-w-[90vw] reveal-up active">
+            <div class="mb-8 flex justify-center">
+                <span class="border border-white/20 bg-white/5 backdrop-blur px-4 py-1.5 rounded-full text-xs font-mono text-brand-accent uppercase tracking-widest">
+                    Live Report • Winter 2025
+                </span>
+            </div>
+            <h1 class="mega-title font-display font-bold mb-8">
+                YOUTUBE<br>
+                <span class="highlight-text italic">MONETIZATION</span><br>
+                INTELLIGENCE
+            </h1>
+            <p class="text-xl md:text-2xl text-gray-400 font-light max-w-2xl mx-auto leading-relaxed">
+                解码 CPM 核心算法，掌握 <span class="text-white border-b border-gray-600 pb-0.5">2025 收益倍增</span> 的终极指南。
+            </p>
+        </div>
+
+        <!-- Scroll Indicator -->
+        <div class="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 opacity-50 animate-bounce">
+            <span class="text-[10px] uppercase tracking-[0.3em]">Scroll</span>
+            <i class="fas fa-arrow-down"></i>
+        </div>
+    </header>
+
+    <!-- Marquee Banner -->
+    <div class="border-y border-white/10 bg-black/50 backdrop-blur py-6 overflow-hidden relative z-20">
+        <div class="animate-marquee whitespace-nowrap flex gap-12 text-6xl font-display font-bold text-transparent" style="-webkit-text-stroke: 1px rgba(255,255,255,0.15);">
+            <span>CPM • RPM • STRATEGY • ANALYTICS • GROWTH • REVENUE •</span>
+            <span>CPM • RPM • STRATEGY • ANALYTICS • GROWTH • REVENUE •</span>
+        </div>
+    </div>
+
+    <!-- Section 1: Market Landscape (Bento Grid) -->
+    <section id="market" class="px-6 py-32 max-w-[1600px] mx-auto">
+        <div class="flex flex-col md:flex-row justify-between items-end mb-16 reveal-up">
+            <div>
+                <h2 class="text-6xl md:text-8xl font-display font-bold mb-4">GLOBAL<br>LANDSCAPE</h2>
+            </div>
+            <p class="text-gray-400 text-lg max-w-md text-right font-light">
+                Tier 1 市场的溢价能力依旧统治全球。<br>数据基于 2025 Q1 预测模型。
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-6 auto-rows-[minmax(200px,auto)] reveal-up">
+            
+            <!-- Large Map Card -->
+            <div class="md:col-span-8 md:row-span-2 bento-box bg-[#050505] min-h-[500px] relative group" onmousemove="handleCardMove(event)">
+                <div class="inner-glow"></div>
+                <div class="p-10 relative z-10 h-full flex flex-col">
+                    <div class="flex justify-between items-start">
+                        <h3 class="text-3xl font-bold">CPM 热力分布</h3>
+                        <div class="px-3 py-1 rounded border border-white/10 bg-white/5 text-xs text-gray-400">GEO DATA</div>
+                    </div>
+                    <div class="flex-grow w-full mt-8 relative">
+                        <div class="absolute inset-0 bg-[url('https://upload.wikimedia.org/wikipedia/commons/e/ec/World_map_blank_without_borders.svg')] bg-contain bg-no-repeat bg-center opacity-20 invert"></div>
+                        <!-- Canvas overlay -->
+                        <canvas id="geoChart" class="relative z-10"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- High Value Stat -->
+            <div class="md:col-span-4 bento-box bg-gradient-to-br from-[#111] to-[#0a0a0a] p-10 flex flex-col justify-center relative group" onmousemove="handleCardMove(event)">
+                <div class="inner-glow"></div>
+                <div class="text-xs font-mono text-blue-400 uppercase tracking-widest mb-4">Top Performer • USA</div>
+                <div class="text-7xl font-display font-bold text-white mb-2">$32.75</div>
+                <div class="text-gray-500 text-sm">最高 CPM 均值</div>
+                <i class="fas fa-arrow-trend-up absolute top-10 right-10 text-3xl text-blue-500 opacity-20 group-hover:opacity-100 transition-opacity"></i>
+            </div>
+
+            <!-- European Core -->
+            <div class="md:col-span-4 bento-box bg-[#0a0a0a] p-10 flex flex-col justify-center relative group" onmousemove="handleCardMove(event)">
+                <div class="inner-glow"></div>
+                <div class="text-xs font-mono text-orange-400 uppercase tracking-widest mb-4">Stable Core • Germany</div>
+                <div class="text-7xl font-display font-bold text-white mb-2">$21.00</div>
+                <div class="text-gray-500 text-sm">欧洲市场基准</div>
+            </div>
+
+            <!-- Volume Stat -->
+            <div class="md:col-span-12 md:row-span-1 bento-box bg-[#0f0f0f] p-10 flex items-center justify-between relative overflow-hidden group" onmousemove="handleCardMove(event)">
+                <div class="inner-glow"></div>
+                <div class="relative z-10 max-w-xl">
+                    <h3 class="text-3xl font-bold mb-2">流量洼地效应</h3>
+                    <p class="text-gray-400">虽然印度 (India) 的 CPM 低于 $1.00，但其庞大的人口基数使其成为全球最大的流量池，适合 "Volume Strategy"。</p>
+                </div>
+                <div class="text-9xl font-display font-bold text-white/5 absolute right-10 -bottom-10 group-hover:text-white/10 transition-colors">VOLUME</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 2: Niches (Sticky Headers & Huge Cards) -->
+    <section id="niche" class="px-6 py-32 max-w-[1600px] mx-auto border-t border-white/5">
+        <div class="flex flex-col items-center text-center mb-24 reveal-up">
+            <span class="px-4 py-1 rounded-full border border-brand-accent/30 text-brand-accent text-sm font-mono uppercase mb-6">High Value Targets</span>
+            <h2 class="text-5xl md:text-8xl font-display font-bold uppercase">Choose Your <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-accent to-brand-blue">Lane</span></h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 reveal-up">
+            <!-- Finance -->
+            <div class="bento-box aspect-[9/14] p-8 flex flex-col justify-between group hover:border-brand-accent/50 transition-colors">
+                <div class="flex justify-between items-start">
+                    <i class="fas fa-coins text-4xl text-brand-accent"></i>
+                    <span class="font-mono text-xs text-gray-500 border border-gray-800 px-2 py-1 rounded">TIER S</span>
+                </div>
+                <div>
+                    <h3 class="text-3xl font-bold text-white mb-2">金融理财</h3>
+                    <div class="text-5xl font-display font-bold text-brand-accent mb-4">$36.36</div>
+                    <p class="text-sm text-gray-400 leading-relaxed">离钱最近的赛道。受众具备极高的 LTV (终身价值)，广告主竞价激烈。</p>
+                </div>
+                <div class="w-full h-1 bg-gray-800 rounded-full overflow-hidden">
+                    <div class="h-full bg-brand-accent w-[98%]"></div>
+                </div>
+            </div>
+
+            <!-- Tech -->
+            <div class="bento-box aspect-[9/14] p-8 flex flex-col justify-between group hover:border-blue-400/50 transition-colors">
+                <div class="flex justify-between items-start">
+                    <i class="fas fa-microchip text-4xl text-blue-400"></i>
+                    <span class="font-mono text-xs text-gray-500 border border-gray-800 px-2 py-1 rounded">TIER A</span>
+                </div>
+                <div>
+                    <h3 class="text-3xl font-bold text-white mb-2">科技数码</h3>
+                    <div class="text-5xl font-display font-bold text-blue-400 mb-4">$12.00</div>
+                    <p class="text-sm text-gray-400 leading-relaxed">B2B 软件与硬件评测。受众精准，购买意向明确。</p>
+                </div>
+                <div class="w-full h-1 bg-gray-800 rounded-full overflow-hidden">
+                    <div class="h-full bg-blue-400 w-[60%]"></div>
+                </div>
+            </div>
+
+            <!-- Education -->
+            <div class="bento-box aspect-[9/14] p-8 flex flex-col justify-between group hover:border-purple-400/50 transition-colors">
+                <div class="flex justify-between items-start">
+                    <i class="fas fa-graduation-cap text-4xl text-purple-400"></i>
+                    <span class="font-mono text-xs text-gray-500 border border-gray-800 px-2 py-1 rounded">TIER B</span>
+                </div>
+                <div>
+                    <h3 class="text-3xl font-bold text-white mb-2">教育培训</h3>
+                    <div class="text-5xl font-display font-bold text-purple-400 mb-4">$9.09</div>
+                    <p class="text-sm text-gray-400 leading-relaxed">知识付费与技能提升。受众粘性高，适合长尾变现。</p>
+                </div>
+                <div class="w-full h-1 bg-gray-800 rounded-full overflow-hidden">
+                    <div class="h-full bg-purple-400 w-[45%]"></div>
+                </div>
+            </div>
+
+            <!-- Shorts -->
+            <div class="bento-box aspect-[9/14] p-8 flex flex-col justify-between bg-gradient-to-b from-[#111] to-red-900/10 group hover:border-red-500/50 transition-colors">
+                <div class="flex justify-between items-start">
+                    <i class="fas fa-bolt text-4xl text-red-500"></i>
+                    <span class="font-mono text-xs text-gray-500 border border-gray-800 px-2 py-1 rounded">VOLUME</span>
+                </div>
+                <div>
+                    <h3 class="text-3xl font-bold text-white mb-2">Shorts</h3>
+                    <div class="text-5xl font-display font-bold text-red-500 mb-4">$0.15</div>
+                    <p class="text-sm text-gray-400 leading-relaxed">以量取胜。适合作为流量入口 (Funnel Top)，而非直接变现手段。</p>
+                </div>
+                <div class="w-full h-1 bg-gray-800 rounded-full overflow-hidden">
+                    <div class="h-full bg-red-500 w-[10%]"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 3: Algorithm (Dark Tech Style) -->
+    <section id="algorithm" class="px-6 py-32 max-w-[1600px] mx-auto bg-[#030303] relative">
+        <!-- Floating Elements -->
+        <div class="absolute right-0 top-1/2 -translate-y-1/2 w-[600px] h-[600px] border border-white/5 rounded-full animate-spin-slow pointer-events-none opacity-20"></div>
+        <div class="absolute left-0 top-1/3 w-[400px] h-[400px] border border-dashed border-white/5 rounded-full animate-spin-slow pointer-events-none opacity-20" style="animation-direction: reverse;"></div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-24 items-center relative z-10 reveal-up">
+            <div class="space-y-12">
+                <div>
+                    <span class="text-gray-500 font-mono text-sm tracking-widest uppercase mb-4 block">03 — Mechanics</span>
+                    <h2 class="text-6xl md:text-8xl font-display font-bold leading-none mb-8">
+                        RPM <span class="text-gray-600">vs</span> CPM
+                    </h2>
+                    <p class="text-2xl text-gray-300 font-light leading-relaxed">
+                        CPM 是市场的标价，<span class="text-brand-accent font-normal">RPM 才是你的净收入</span>。理解两者差距，是提升变现效率的关键。
+                    </p>
+                </div>
+
+                <div class="space-y-6">
+                    <div class="p-6 border-l-2 border-white/20 pl-8">
+                        <h4 class="text-2xl font-bold text-white mb-2">CPM (Cost Per Mille)</h4>
+                        <p class="text-gray-400">广告商的出价。受内容质量、观众画像和竞价环境影响。</p>
+                    </div>
+                    <div class="p-6 border-l-2 border-brand-accent pl-8 bg-brand-accent/5">
+                        <h4 class="text-2xl font-bold text-brand-accent mb-2">RPM (Revenue Per Mille)</h4>
+                        <p class="text-gray-400">
+                            RPM = (总收入 / 总播放量) × 1000。<br>
+                            它包含了广告、会员、超级留言等所有收入，并扣除了平台抽成。
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Visual Graphic -->
+            <div class="grid grid-cols-2 gap-4">
+                <div class="bento-box aspect-square flex flex-col justify-center items-center text-center p-8 bg-[#0a0a0a]">
+                    <div class="text-5xl mb-4 text-gray-600 font-thin">01</div>
+                    <div class="font-bold text-xl">Trigger</div>
+                    <div class="text-xs text-gray-500 mt-2 uppercase">Video Load</div>
+                </div>
+                <div class="bento-box aspect-square flex flex-col justify-center items-center text-center p-8 bg-[#0a0a0a]">
+                    <div class="text-5xl mb-4 text-gray-600 font-thin">02</div>
+                    <div class="font-bold text-xl">Target</div>
+                    <div class="text-xs text-gray-500 mt-2 uppercase">User Profile</div>
+                </div>
+                <div class="bento-box aspect-square flex flex-col justify-center items-center text-center p-8 border-brand-accent/30 bg-brand-accent/5">
+                    <div class="text-5xl mb-4 text-brand-accent font-thin">03</div>
+                    <div class="font-bold text-xl text-brand-accent">Bid</div>
+                    <div class="text-xs text-brand-accent/60 mt-2 uppercase">Real-Time Auction</div>
+                </div>
+                <div class="bento-box aspect-square flex flex-col justify-center items-center text-center p-8 bg-[#0a0a0a]">
+                    <div class="text-5xl mb-4 text-white font-thin">04</div>
+                    <div class="font-bold text-xl text-white">Show</div>
+                    <div class="text-xs text-gray-500 mt-2 uppercase">Ad Display</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 4: Tactics (Flip Cards) -->
+    <section id="strategy" class="px-6 py-32 max-w-[1600px] mx-auto border-t border-white/5">
+        <div class="mb-20 text-center reveal-up">
+            <h2 class="text-5xl md:text-7xl font-display font-bold uppercase mb-6">Growth <span class="text-brand-accent">Tactics</span></h2>
+            <p class="text-xl text-gray-400">提升 CPM 的关键杠杆</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 reveal-up">
+            
+            <!-- Flip Card 1 -->
+            <div class="flip-card-wrapper group">
+                <div class="flip-card-content">
+                    <div class="flip-front">
+                        <div class="flex justify-between items-start">
+                            <span class="font-mono text-xs border border-white/20 rounded px-2 py-1 text-gray-400">01</span>
+                            <i class="fas fa-clock text-4xl text-brand-purple"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-4xl font-bold mb-2">黄金 8 分钟</h3>
+                            <p class="text-gray-500 font-mono text-sm">DURATION STRATEGY</p>
+                        </div>
+                        <div class="w-full h-[1px] bg-white/10"></div>
+                        <div class="text-right text-brand-purple font-bold">查看详情 <i class="fas fa-arrow-right ml-2"></i></div>
+                    </div>
+                    <div class="flip-back">
+                        <div>
+                            <h3 class="text-2xl font-bold text-brand-purple mb-6">中插广告权限</h3>
+                            <p class="text-gray-300 leading-relaxed mb-6">
+                                视频长度超过 <span class="text-white font-bold">8分01秒</span> 是开启中插广告 (Mid-rolls) 的硬性门槛。
+                            </p>
+                            <ul class="space-y-4 text-sm text-gray-400">
+                                <li class="border-l-2 border-brand-purple pl-4">
+                                    <strong class="block text-white mb-1">实操技巧</strong>
+                                    在剪辑阶段预埋“悬念点”或“黑屏转场”，手动插入广告点，减少跳出率。
+                                </li>
+                                <li class="border-l-2 border-white/20 pl-4">
+                                    <strong class="block text-white mb-1">收益影响</strong>
+                                    合理的中插可使单视频 RPM 提升 2.5 倍以上。
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Flip Card 2 -->
+            <div class="flip-card-wrapper group">
+                <div class="flip-card-content">
+                    <div class="flip-front">
+                        <div class="flex justify-between items-start">
+                            <span class="font-mono text-xs border border-white/20 rounded px-2 py-1 text-gray-400">02</span>
+                            <i class="fas fa-earth-americas text-4xl text-brand-blue"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-4xl font-bold mb-2">地理套利</h3>
+                            <p class="text-gray-500 font-mono text-sm">GEO ARBITRAGE</p>
+                        </div>
+                        <div class="w-full h-[1px] bg-white/10"></div>
+                        <div class="text-right text-brand-blue font-bold">查看详情 <i class="fas fa-arrow-right ml-2"></i></div>
+                    </div>
+                    <div class="flip-back" style="border-color: var(--brand-blue)">
+                        <div>
+                            <h3 class="text-2xl font-bold text-brand-blue mb-6">瞄准 Tier 1</h3>
+                            <p class="text-gray-300 leading-relaxed mb-6">
+                                只要内容能被英美澳观众理解，CPM 就会飙升。无需肉身在海外。
+                            </p>
+                            <ul class="space-y-4 text-sm text-gray-400">
+                                <li class="border-l-2 border-brand-blue pl-4">
+                                    <strong class="block text-white mb-1">内容策略</strong>
+                                    制作无语言障碍内容 (ASMR, DIY, 演示) 或添加高质量英语 CC 字幕。
+                                </li>
+                                <li class="border-l-2 border-white/20 pl-4">
+                                    <strong class="block text-white mb-1">数据对比</strong>
+                                    美国观众的单次点击价值通常是印度观众的 20 倍。
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Flip Card 3 -->
+            <div class="flip-card-wrapper group">
+                <div class="flip-card-content">
+                    <div class="flip-front">
+                        <div class="flex justify-between items-start">
+                            <span class="font-mono text-xs border border-white/20 rounded px-2 py-1 text-gray-400">03</span>
+                            <i class="fas fa-calendar-star text-4xl text-brand-accent"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-4xl font-bold mb-2">Q4 效应</h3>
+                            <p class="text-gray-500 font-mono text-sm">SEASONALITY</p>
+                        </div>
+                        <div class="w-full h-[1px] bg-white/10"></div>
+                        <div class="text-right text-brand-accent font-bold">查看详情 <i class="fas fa-arrow-right ml-2"></i></div>
+                    </div>
+                    <div class="flip-back">
+                        <div>
+                            <h3 class="text-2xl font-bold text-brand-accent mb-6">预算爆发期</h3>
+                            <p class="text-gray-300 leading-relaxed mb-6">
+                                每年 10-12 月，广告商需耗尽年度预算，加上黑五圣诞促销，CPM 达到峰值。
+                            </p>
+                            <ul class="space-y-4 text-sm text-gray-400">
+                                <li class="border-l-2 border-brand-accent pl-4">
+                                    <strong class="block text-white mb-1">行动指南</strong>
+                                    在 Q1-Q3 积累素材和粉丝，在 Q4 提高发片频率和质量，最大化收割。
+                                </li>
+                                <li class="border-l-2 border-white/20 pl-4">
+                                    <strong class="block text-white mb-1">低谷预警</strong>
+                                    1月份预算重置，通常是全年收入最低点，适合休息或筹备。
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Section 5: Risk (Red Zone) -->
+    <section id="risk" class="px-6 py-32 max-w-[1600px] mx-auto border-t border-red-900/30 bg-gradient-to-b from-[#050505] to-[#1a0000]">
+        <div class="flex items-center gap-6 mb-16 reveal-up">
+            <div class="w-4 h-4 bg-red-600 rounded-full animate-ping"></div>
+            <h2 class="text-4xl md:text-6xl font-display font-bold text-red-600">COMPLIANCE</h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 reveal-up">
+            <!-- Risk 1 -->
+            <div class="bento-box p-10 border-red-900/30 bg-red-950/5 hover:bg-red-900/10">
+                <div class="flex items-center gap-4 mb-6">
+                    <i class="fas fa-fingerprint text-3xl text-red-500"></i>
+                    <h3 class="text-2xl font-bold text-white">Content ID 风险</h3>
+                </div>
+                <p class="text-gray-400 leading-relaxed mb-6">
+                    YouTube 的 AI 极其强大。哪怕几秒钟的背景音乐或翻转的画面，都会被指纹技术识别。
+                </p>
+                <div class="flex gap-4 text-sm font-mono">
+                    <span class="px-3 py-1 bg-red-500/20 text-red-400 rounded">CLAIM (分润)</span>
+                    <span class="px-3 py-1 bg-red-500/20 text-red-400 rounded">STRIKE (下架)</span>
+                </div>
+            </div>
+
+            <!-- Risk 2 -->
+            <div class="bento-box p-10 border-red-900/30 bg-red-950/5 hover:bg-red-900/10">
+                <div class="flex items-center gap-4 mb-6">
+                    <i class="fas fa-recycle text-3xl text-red-500"></i>
+                    <h3 class="text-2xl font-bold text-white">重复内容 (Reused)</h3>
+                </div>
+                <p class="text-gray-400 leading-relaxed mb-6">
+                    YPP 获利资格的头号杀手。简单的搬运、AI朗读、合集视频将被判定为无原创价值。
+                </p>
+                <div class="flex gap-4 text-sm font-mono">
+                    <span class="px-3 py-1 bg-green-500/20 text-green-400 rounded">需增加解说</span>
+                    <span class="px-3 py-1 bg-green-500/20 text-green-400 rounded">需深度剪辑</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="py-24 text-center border-t border-white/5 bg-black">
+        <div class="text-brand-accent text-4xl mb-6 animate-pulse-glow">
+            <i class="fab fa-youtube"></i>
+        </div>
+        <h2 class="text-3xl font-display font-bold text-white mb-2">YOUTUBE INTELLIGENCE</h2>
+        <p class="text-gray-600 text-sm font-mono tracking-widest">WINTER 2025 EDITION</p>
+    </footer>
+
+    <script>
+        // Reveal on Scroll
+        const observerOptions = { threshold: 0.1, rootMargin: "0px 0px -100px 0px" };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, observerOptions);
+        document.querySelectorAll('.reveal-up').forEach(el => observer.observe(el));
+
+        // 3D Card Effect
+        function handleCardMove(e) {
+            const card = e.currentTarget;
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            card.style.setProperty('--mouse-x', `${x}px`);
+            card.style.setProperty('--mouse-y', `${y}px`);
+        }
+
+        // Charts Init
+        Chart.defaults.color = '#555';
+        Chart.defaults.font.family = "'Space Grotesk', sans-serif";
+        
+        const geoCtx = document.getElementById('geoChart').getContext('2d');
+        // Gradient
+        const gradient = geoCtx.createLinearGradient(0, 0, 0, 400);
+        gradient.addColorStop(0, '#22d3ee');
+        gradient.addColorStop(1, '#0e7490');
+
+        new Chart(geoCtx, {
+            type: 'bar',
+            data: {
+                labels: ['US', 'AU', 'CH', 'CA', 'UK', 'DE', 'IT', 'ES', 'IN'],
+                datasets: [{
+                    label: 'CPM ($)',
+                    data: [32.75, 36.21, 22.00, 29.15, 22.00, 21.00, 16.40, 14.50, 1.00],
+                    backgroundColor: gradient,
+                    borderRadius: 4,
+                    barPercentage: 0.5
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { grid: { color: '#222' }, ticks: { color: '#888' } },
+                    y: { grid: { display: false }, ticks: { color: '#fff' } }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
