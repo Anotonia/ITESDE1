@@ -1,6 +1,3 @@
-
-https://WjPq8WTXkhNoKT.bessxmo.com/api/v1/client/subscribe?token=3fa3919612c1196c6d92bae93f5b2c88&ttoken=d8cd98f00b204e980
-
 Android客户端-Clash for Android
 Clash for Android是Android上流行的客户端，以下教程将提供Clash for Android的基础使用方法。
 请注意，教程编写时最新版为2.5.5，后续版本界面可能会与图片所示内容有所差异，请以最新版为准。
