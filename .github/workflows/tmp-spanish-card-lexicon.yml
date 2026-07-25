@@ -5,6 +5,13 @@ on:
     paths:
       - tools/tmp_build_spanish_lexicon.py
       - .github/workflows/tmp-spanish-card-lexicon.yml
+  pull_request:
+    branches: [main]
+    paths:
+      - tools/build_spanish_lexicon.py
+      - tools/tmp_build_spanish_lexicon.py
+      - .github/workflows/spanish-card-lexicon.yml
+      - .github/workflows/tmp-spanish-card-lexicon.yml
   workflow_dispatch:
 jobs:
   build:
@@ -17,7 +24,12 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y hunspell hunspell-es zip
       - name: Build lexicons and optimize distributions
-        run: python3 tools/tmp_build_spanish_lexicon.py
+        run: |
+          if [ -f tools/build_spanish_lexicon.py ]; then
+            python3 tools/build_spanish_lexicon.py
+          else
+            python3 tools/tmp_build_spanish_lexicon.py
+          fi
       - name: Archive
         run: |
           cd artifacts
