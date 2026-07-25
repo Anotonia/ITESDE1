@@ -8,6 +8,7 @@ on:
   pull_request:
     branches: [main]
     paths:
+      - tools/fast_build_spanish_lexicon.py
       - tools/build_spanish_lexicon.py
       - tools/tmp_build_spanish_lexicon.py
       - .github/workflows/spanish-card-lexicon.yml
@@ -25,7 +26,9 @@ jobs:
           sudo apt-get install -y hunspell hunspell-es zip
       - name: Build lexicons and optimize distributions
         run: |
-          if [ -f tools/build_spanish_lexicon.py ]; then
+          if [ -f tools/fast_build_spanish_lexicon.py ]; then
+            python3 tools/fast_build_spanish_lexicon.py
+          elif [ -f tools/build_spanish_lexicon.py ]; then
             python3 tools/build_spanish_lexicon.py
           else
             python3 tools/tmp_build_spanish_lexicon.py
