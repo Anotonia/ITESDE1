@@ -33,3 +33,4 @@ jobs:
             artifacts/spanish-card-lexicon/**
             artifacts/spanish-card-lexicon.zip
           if-no-files-found: error
+# trigger: 2026-07-25
